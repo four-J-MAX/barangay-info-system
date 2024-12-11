@@ -25,12 +25,6 @@ $isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
 // $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
 $zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
 // Check user type
-$isAdmin = $_SESSION['type'] === 'administrator';
-
-if (!$isAdmin) {
-    // Do not render the notification bell if not an admin
-    return;
-}
 
 
 $all_barangay = [
