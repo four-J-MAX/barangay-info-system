@@ -24,7 +24,6 @@ function clean($data)
 $isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
 // $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
 $zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
-// Check user type
 
 
 $all_barangay = [
@@ -403,38 +402,35 @@ echo '<header class="header">
         <ul class="nav navbar-nav navbar-right">';
 
 if ($isAdmin) { // Only show the notification bell for admins
-    echo '<li style="position: relative;">
-            <i class="fa fa-bell" id="over" data-value="' . $total_count . '" style="z-index:-99 !important;font-size:20px;color:black;margin:1.5rem 0.4rem !important;"></i>';
+    echo '<li class="dropdown" style="position: relative;">
+            <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell" style="font-size:20px;color:black;margin:1.5rem 0.4rem;"></i>';
     if (!empty($total_count)) {
-        echo '<div class="round" id="bell-count" data-value="' . $total_count . '"><span>' . $total_count . '</span></div>';
+        echo '<div class="round" id="bell-count"><span>' . $total_count . '</span></div>';
     }
-    echo '</li>';
+    echo '</a>
+          <ul class="dropdown-menu" aria-labelledby="notif-bell" style="max-height: 300px; overflow-y: auto; width: 300px;">';
 
-    if (!empty($count_active)) {
-        echo '<div id="list">';
-        foreach ($notifications_data as $list_rows) {
-            echo '<li id="message_items">
-                <div class="message alert alert-warning" data-id="' . $list_rows['id'] . '">
-                    <div class="msg">
-                        <p>' . $list_rows['fname'] . ' ' . $list_rows['mname'] . ' ' . $list_rows['lname'] . ' Date Move In: ' . $list_rows['datemove'] . ' is now officially resident of the barangay</p>
-                    </div>
-                </div>
-            </li>';
+    if (!empty($notifications_data)) {
+        foreach ($notifications_data as $notif) {
+            echo '<li style="padding: 10px; border-bottom: 1px solid #ccc;">
+                    <strong>' . $notif['fname'] . ' ' . $notif['mname'] . ' ' . $notif['lname'] . '</strong><br>
+                    <small>Date Move In: ' . $notif['datemove'] . '</small>
+                  </li>';
         }
-        echo '</div>';
+    } elseif (!empty($deactive_notifications_dump)) {
+        foreach ($deactive_notifications_dump as $notif) {
+            echo '<li style="padding: 10px; border-bottom: 1px solid #ccc;">
+                    <strong>' . $notif['fname'] . ' ' . $notif['mname'] . ' ' . $notif['lname'] . '</strong><br>
+                    <small>Date Move In: ' . $notif['datemove'] . '</small>
+                  </li>';
+        }
     } else {
-        echo '<div id="list">';
-        foreach ($deactive_notifications_dump as $list_rows) {
-            echo '<li id="message_items">
-                <div class="message alert alert-danger" data-id="' . $list_rows['id'] . '">
-                    <div class="msg">
-                        <p>' . $list_rows['fname'] . ' ' . $list_rows['mname'] . ' ' . $list_rows['lname'] . ' Date Move In: ' . $list_rows['datemove'] . ' is now officially resident of the barangay</p>
-                    </div>
-                </div>
-            </li>';
-        }
-        echo '</div>';
+        echo '<li style="padding: 10px; text-align: center;">No new notifications</li>';
     }
+
+    echo '</ul>
+        </li>';
 }
 
 echo '</ul>
@@ -460,6 +456,7 @@ echo '</ul>
     </nav>
 </header>';
 ?>
+
 
 <div id="editProfileModal" class="modal fade">
     <form method="post">
@@ -694,21 +691,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                        }).then((result) => {
+                            }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                },
+                    },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-            });
-        }
+                });
+            }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
