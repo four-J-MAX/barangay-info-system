@@ -14,332 +14,314 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.all.min.js"></script>
 
 
-<?php
-function clean($data){
-    $data = htmlspecialchars(stripslashes(trim($data)));
-    return $data;
-}
-
-$isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
-// $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
-$zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
-
-$all_barangay = [
-    "Kangwayan",
-    "Kodia",
-    "Pili",
-    "Bunakan",
-    "Tabagak",
-    "Maalat",
-    "Tarong",
-    "Malbago",
-    "Mancilang",
-    "Kaongkod",
-    "San Agustin",
-    "Poblacion",
-    "Tugas",
-    "Talangnan",
-];
-
-$today = date("Y-m-d");
-
-$count_tblactivity = $con->query("SELECT * FROM tblactivity WHERE DATE(date_created) = '$today'");
-
-$count_tblactivityphoto = $con->query("SELECT * FROM tblactivityphoto WHERE DATE(date_created) = '$today'");
-$count_tblblotter = $con->query("SELECT * FROM tblblotter WHERE DATE(date_created) = '$today'");
-$count_tblclearance = $con->query("SELECT * FROM tblclearance WHERE DATE(date_created) = '$today'");
-$count_tblhousehold = $con->query("SELECT * FROM tblhousehold WHERE DATE(date_created) = '$today'");
-$count_tbllogs = $con->query("SELECT * FROM tbllogs WHERE DATE(logdate) = '$today'");
-$count_tblofficial = $con->query("SELECT * FROM tblofficial WHERE DATE(date_created) = '$today'");
-$count_tblpermit = $con->query("SELECT * FROM tblpermit WHERE DATE(date_created) = '$today'");
-$count_tblproject = $con->query("SELECT * FROM tblproject WHERE DATE(date_created) = '$today'");
-$count_tblsession = $con->query("SELECT * FROM tblsession WHERE DATE(date_created) = '$today'");
-$count_tblsettings = $con->query("SELECT * FROM tblsettings WHERE DATE(date_created) = '$today'");
-$count_tblstaff = $con->query("SELECT * FROM tblstaff WHERE DATE(date_created) = '$today'");
-$count_tbluser = $con->query("SELECT * FROM tbluser WHERE DATE(date_created) = '$today'");
-$count_tblvisitor = $con->query("SELECT * FROM tblvisitor WHERE DATE(date_created) = '$today'");
-$count_tblzone = $con->query("SELECT * FROM tblzone WHERE DATE(date_created) = '$today'");
-
-
-
-
-
-$find_notifications = "Select * from tblresident where  DATE(date_created) = '$today'";
-$result = mysqli_query($con, $find_notifications);
-$count_active = '';
-$notifications_data = array();
-$deactive_notifications_dump = array();
-while ($rows = mysqli_fetch_assoc($result)) {
-    $count_active = mysqli_num_rows($result);
-    $notifications_data[] = array(
-        "id" => $rows['id'],
-        "fname" => $rows['fname'],
-        "lname" => $rows['lname'],
-        "mname" => $rows['mname'],
-        "datemove" => $rows['datemove']
-
-
-
-    );
-}
-
-
-$total_count = 
-            $count_tblactivity->num_rows + 
-            $count_tblactivityphoto->num_rows +
-            $count_tblblotter->num_rows + 
-            $count_tblclearance->num_rows + 
-            $count_tblhousehold->num_rows + 
-            $count_tbllogs->num_rows + 
-            $count_tblofficial->num_rows + 
-            $count_tblpermit->num_rows + 
-            $count_tblproject->num_rows +
-            $count_tblsession->num_rows + 
-            $count_tblsettings->num_rows + 
-            $count_tblstaff->num_rows +
-            $count_tbluser->num_rows +
-            $count_tblvisitor->num_rows + 
-            $count_tblzone->num_rows + 
-            $result->num_rows
-            ;
-
-//only five specific posts
-$deactive_notifications = "Select * from tblresident where  DATE(date_created) = '$today' ORDER BY id DESC LIMIT 0,5";
-$result = mysqli_query($con, $deactive_notifications);
-while ($rows = mysqli_fetch_assoc($result)) {
-    $deactive_notifications_dump[] = array(
-        "id" => $rows['id'],
-        "fname" => $rows['fname'],
-        "lname" => $rows['lname'],
-        "mname" => $rows['mname'],
-        "datemove" => $rows['datemove']
-    );
-}
-
-?>
 <style>
-/* Notification Count Badge */
-.round {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    position: absolute;
-    background: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    left: 16px; /* Adjust horizontal positioning */
-    top: 0px; /* Adjust vertical positioning */
-    z-index: 99; /* Ensure it appears above other elements */
-}
-
-.round > span {
-    color: white;
-    font-size: 12px; /* Consistent font size */
-    font-weight: bold;
-    line-height: 1;
-}
-
-/* Notification Bell Icon */
-.fa-bell {
-    position: relative; /* Allow badge to position relative to the bell */
-    font-size: 20px;
-    color: black;
-    margin: 1.5rem 0.4rem !important;
-}
-
-/* Notification Dropdown */
-#list {
-    display: none; /* Hidden by default */
-    position: absolute; /* Position relative to bell icon */
-    top: 40px; /* Adjust below the bell */
-    right: 0; /* Align to the right edge */
-    background: #ffffff; /* White background for visibility */
-    z-index: 100; /* Keep above other elements */
-    width: 300px; /* Fixed width for consistency */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border: 1px solid #ddd; /* Light border */
-    border-radius: 5px; /* Optional rounded corners */
-    padding: 10px; /* Add padding inside */
-}
-
-.message {
-    margin: 10px 0; /* Space between messages */
-    padding: 10px; /* Padding inside each message */
-    border-bottom: 1px solid #f0f0f0; /* Separate messages */
-}
-
-.message > .msg {
-    color: #333; /* Neutral text color */
-    font-size: 14px; /* Readable font size */
-    line-height: 1.5; /* Comfortable line height */
-}
-
-/* Navbar and User Menu Styling */
-.navbar-right {
-    display: flex; /* Align items horizontally */
-    align-items: center; /* Vertically align items */
-}
-
-.user-menu {
-    margin-left: 1rem; /* Add space between notification and user menu */
-}
-
-.user-menu a {
-    color: black; /* Neutral link color */
-    text-decoration: none; /* Remove underline */
-}
-
-.user-menu ul {
-    list-style: none; /* Remove bullet points */
-    padding: 0;
-    margin: 0;
-}
-
-.user-menu ul li {
-    padding: 10px;
-    background: #f9f9f9;
-    border-bottom: 1px solid #ddd;
-}
-
-.user-menu ul li a {
-    color: #333;
-    text-decoration: none;
-}
-
-.user-menu ul li a:hover {
-    background: #007bff;
-    color: white;
-}
-
-/* Media Query for Responsiveness */
-@media (max-width: 768px) {
-    #list {
-        width: 90%; /* Adjust dropdown width for smaller screens */
-        right: 5%; /* Center it more */
+    /* Notification Count Badge */
+    .round {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        position: absolute;
+        background: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        left: 16px;
+        /* Adjust horizontal positioning */
+        top: 0px;
+        /* Adjust vertical positioning */
+        z-index: 99;
+        /* Ensure it appears above other elements */
     }
 
+    .round>span {
+        color: white;
+        font-size: 12px;
+        /* Consistent font size */
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    /* Notification Bell Icon */
+    .fa-bell {
+        position: relative;
+        /* Allow badge to position relative to the bell */
+        font-size: 20px;
+        color: black;
+        margin: 1.5rem 0.4rem !important;
+    }
+
+    /* Notification Dropdown */
+    #list {
+        display: none;
+        /* Hidden by default */
+        position: absolute;
+        /* Position relative to bell icon */
+        top: 40px;
+        /* Adjust below the bell */
+        right: 0;
+        /* Align to the right edge */
+        background: #ffffff;
+        /* White background for visibility */
+        z-index: 100;
+        /* Keep above other elements */
+        width: 300px;
+        /* Fixed width for consistency */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow for depth */
+        border: 1px solid #ddd;
+        /* Light border */
+        border-radius: 5px;
+        /* Optional rounded corners */
+        padding: 10px;
+        /* Add padding inside */
+    }
+
+    .message {
+        margin: 10px 0;
+        /* Space between messages */
+        padding: 10px;
+        /* Padding inside each message */
+        border-bottom: 1px solid #f0f0f0;
+        /* Separate messages */
+    }
+
+    .message>.msg {
+        color: #333;
+        /* Neutral text color */
+        font-size: 14px;
+        /* Readable font size */
+        line-height: 1.5;
+        /* Comfortable line height */
+    }
+
+    /* Navbar and User Menu Styling */
     .navbar-right {
-        flex-direction: column; /* Stack items vertically */
+        display: flex;
+        /* Align items horizontally */
+        align-items: center;
+        /* Vertically align items */
     }
 
     .user-menu {
-        margin-left: 0; /* Remove unnecessary margin */
+        margin-left: 1rem;
+        /* Add space between notification and user menu */
     }
-}
 
-/* Print-Specific Styles */
-@media print {
-    .dont-print {
-        display: none !important;
+    .user-menu a {
+        color: black;
+        /* Neutral link color */
+        text-decoration: none;
+        /* Remove underline */
     }
-}
+
+    .user-menu ul {
+        list-style: none;
+        /* Remove bullet points */
+        padding: 0;
+        margin: 0;
+    }
+
+    .user-menu ul li {
+        padding: 10px;
+        background: #f9f9f9;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .user-menu ul li a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .user-menu ul li a:hover {
+        background: #007bff;
+        color: white;
+    }
+
+    /* Media Query for Responsiveness */
+    @media (max-width: 768px) {
+        #list {
+            width: 90%;
+            /* Adjust dropdown width for smaller screens */
+            right: 5%;
+            /* Center it more */
+        }
+
+        .navbar-right {
+            flex-direction: column;
+            /* Stack items vertically */
+        }
+
+        .user-menu {
+            margin-left: 0;
+            /* Remove unnecessary margin */
+        }
+    }
+
+    /* Print-Specific Styles */
+    @media print {
+        .dont-print {
+            display: none !important;
+        }
+    }
 
 
 
     /* Styling for the navbar-right section */
-.navbar-right {
-    margin-right: 20px;
-}
+    .navbar-right {
+        margin-right: 20px;
+    }
 
-/* Styling the dropdown menu */
-.dropdown-menu {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 220px; /* Adjust width as needed */
-}
+    /* Styling the dropdown menu */
+    .dropdown-menu {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 220px;
+        /* Adjust width as needed */
+    }
 
-/* Styling the user-header */
-.user-header {
-    background-color: #0000FF;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-}
+    /* Styling the user-header */
+    .user-header {
+        background-color: #0000FF;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 8px;
+    }
 
-/* Profile image style */
-.user-header img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-}
+    /* Profile image style */
+    .user-header img {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
 
-/* Styling the user-footer */
-.user-footer {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-}
+    /* Styling the user-footer */
+    .user-footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+    }
 
-/* Style for left button */
-.user-footer .pull-left .btn {
-    background-color: #000;
-    color: white;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 14px;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
-}
+    /* Style for left button */
+    .user-footer .pull-left .btn {
+        background-color: #000;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 14px;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease;
+    }
 
-/* Style for right button */
-.user-footer .pull-right .btn {
-    background-color: #000;
-    color: white;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 14px;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
-}
+    /* Style for right button */
+    .user-footer .pull-right .btn {
+        background-color: #000;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 14px;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease;
+    }
 
-/* Hover effect for buttons */
-.user-footer .pull-left .btn:hover,
-.user-footer .pull-right .btn:hover {
-    background-color: black; /* For the Change Account button */
-    background-color: black; /* For the Sign Out button */
-}
+    /* Hover effect for buttons */
+    .user-footer .pull-left .btn:hover,
+    .user-footer .pull-right .btn:hover {
+        background-color: black;
+        /* For the Change Account button */
+        background-color: black;
+        /* For the Sign Out button */
+    }
 
-/* Styling the dropdown toggle link */
-.dropdown-toggle {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    color: #333;
-}
+    /* Styling the dropdown toggle link */
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #333;
+    }
 
-.dropdown-toggle i {
-    margin-right: 10px;
-}
+    .dropdown-toggle i {
+        margin-right: 10px;
+    }
 
-.dropdown-toggle span {
-    font-weight: bold;
-}
-
+    .dropdown-toggle span {
+        font-weight: bold;
+    }
 </style>
 
-<?php
- $userid = $_SESSION['userid'];
-                                            
-$squery = mysqli_query($con, "SELECT * FROM tblsettings WHERE user_id = '$userid'");
 
-if ($squery && mysqli_num_rows($squery) > 0) {
-    $data = $squery->fetch_assoc();
+
+// Fetch user data
+$userid = $_SESSION['userid'];
+$squery = mysqli_query($con, "SELECT * FROM tbluser WHERE id = '$userid' AND deleted = 0");
+$user_data = $squery->fetch_assoc();
+
+// Check if the user is an administrator
+$is_admin = $user_data['type'] === 'administrator';
+
+// Fetch settings for header
+$settings_query = mysqli_query($con, "SELECT * FROM tblsettings WHERE user_id = '$userid'");
+if ($settings_query && mysqli_num_rows($settings_query) > 0) {
+$settings_data = $settings_query->fetch_assoc();
 } else {
-    // Default values if no data is found
-    $data = [
-        'name' => 'Barangay Management System',
-        'logo' => 'madridejos.png' // Replace with a default image path
-    ];
+$settings_data = [
+'name' => 'Barangay Management System',
+'logo' => 'madridejos.png', // Default logo
+];
 }
-$logo = $data['logo'];
-$name = $data['name'];
+$logo = $settings_data['logo'];
+$name = $settings_data['name'];
 
+// Calculate notifications and fetch data if the user is an administrator
+$total_count = 0;
+$notifications_data = [];
+if ($is_admin) {
+$today = date("Y-m-d");
+
+// Count notifications from relevant tables
+$tables_to_count = [
+"tblactivity",
+"tblactivityphoto",
+"tblblotter",
+"tblclearance",
+"tblhousehold",
+"tbllogs",
+"tblofficial",
+"tblpermit",
+"tblproject",
+"tblsession",
+"tblsettings",
+"tblstaff",
+"tbluser",
+"tblvisitor",
+"tblzone",
+];
+
+foreach ($tables_to_count as $table) {
+$count_query = $con->query("SELECT * FROM $table WHERE DATE(date_created) = '$today'");
+$total_count += $count_query->num_rows;
+}
+
+// Fetch recent notifications
+$notification_query = $con->query("SELECT * FROM tblresident WHERE DATE(date_created) = '$today' ORDER BY id DESC LIMIT
+5");
+while ($row = $notification_query->fetch_assoc()) {
+$notifications_data[] = [
+"id" => $row['id'],
+"fname" => $row['fname'],
+"lname" => $row['lname'],
+"mname" => $row['mname'],
+"datemove" => $row['datemove'],
+];
+}
+}
+
+// Render header
 echo ' <header class="header">
     <a href="#" class="logo">
         <!-- Logo image with size and styling -->
@@ -348,77 +330,84 @@ echo ' <header class="header">
         <p style="font-size: 12px; font-family: Arial, sans-serif;">'.$name.'</p>
     </a>
 
-
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top" role="navigation">
-        <!-- Sidebar toggle button-->
+        <!-- Sidebar toggle button -->
         <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </a>
-        <ul class="nav navbar-nav navbar-right">
-            <li style="position: relative;">
-                <i class="fa fa-bell" id="over" data-value="' . $total_count . '" style="z-index:-99 !important;font-size:20px;color:black;margin:1.5rem 0.4rem !important;"></i>';
-                if (!empty($total_count)) {
-                    echo '<div class="round" id="bell-count" data-value="' . $total_count . '"><span>' . $total_count . '</span></div>';
-                }
-            echo '</li>';
-            if (!empty($count_active)) {
-                echo '<div id="list">';
-                foreach ($notifications_data as $list_rows) {
-                    echo '<li id="message_items">
-                    <div class="message alert alert-warning" data-id="' . $list_rows['id'] . '">
-                        <div class="msg">
-                            <p>' . $list_rows['fname'] . ' ' . $list_rows['mname'] . ' ' . $list_rows['lname'] . ' Date Move In: ' . $list_rows['datemove'] . ' is now officially resident of the barangay</p>
-                        </div>
-                    </div>
-                </li>';
-                }
-                echo '</div>';
-            } else {
-                echo '<div id="list">';
-                foreach ($deactive_notifications_dump as $list_rows) {
-                    echo '<li id="message_items">
-                    <div class="message alert alert-danger" data-id="' . $list_rows['id'] . '">
-                        <div class="msg">
-                            <p>' . $list_rows['fname'] . ' ' . $list_rows['mname'] . ' ' . $list_rows['lname'] . ' Date Move In: ' . $list_rows['datemove'] . ' is now officially resident of the barangay</p>
-                        </div>
-                    </div>
-                </li>';
-                }
-                echo '</div>';
+        <ul class="nav navbar-nav navbar-right">';
+
+            // Include notification bell for administrators
+            if ($is_admin) {
+            echo '<div class="navbar-right">
+                <li style="position: relative;">
+                    <i class="fa fa-bell" id="notification-bell"></i>';
+                    if ($total_count > 0) {
+                    echo '<div class="round" id="bell-count"><span>'.$total_count.'</span></div>';
+                    }
+                    echo '<div id="notification-list" style="display:none;">';
+                        if (count($notifications_data) > 0) {
+                        foreach ($notifications_data as $notification) {
+                        echo '<div class="message">
+                            <p>
+                                '.$notification['fname'].' '.$notification['mname'].' '.$notification['lname'].'
+                                - Date Move In: '.$notification['datemove'].'
+                            </p>
+                        </div>';
+                        }
+                        } else {
+                        echo '<div class="message">
+                            <p>No notifications available.</p>
+                        </div>';
+                        }
+                        echo '</div>
+                </li>
+            </div>';
             }
-            echo '<ul>
-                  <div class="navbar-right">
-                <ul class="nav navbar-nav" style="background-color:transparent;">
-                    <!-- User Account: style can be found in dropdown.less -->
-                    <li class="dropdown user user-menu">
-                        <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
-                            <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i class="caret"></i></span>
-                        </a>
-                       <?= $barangayByZoneLeader ?>
-                        <ul class="dropdown-menu">
-                            <!-- User image -->
-                           <li class="user-header bg-light-black" style="background-color:#0000FF;">
-                               <a href="#" class="btn btn-default btn-flat" data-toggle="modal" data-target="#editProfileModal" style=" background-color: #000; color:white;">Change Account</a>
-                            </li>
-                            <!-- Menu Body -->
-                            <!-- Menu Footer-->
-                            <li class="user-footer">
-                                <div class="pull-left">
-                                   <a href="javascript:void(0);" class="btn btn-default btn-flat" style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
-                                </div>
-                               
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>';
+
+            // Continue with the user account dropdown menu
+            echo ' <ul class="nav navbar-nav" style="background-color:transparent;">
+                <!-- User Account: style can be found in dropdown.less -->
+                <li class="dropdown user user-menu">
+                    <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i
+                                class="caret"></i></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!-- User image -->
+                        <li class="user-header bg-light-black" style="background-color:#0000FF;">
+                            <a href="#" class="btn btn-default btn-flat" data-toggle="modal"
+                                data-target="#editProfileModal" style="background-color: #000; color:white;">Change
+                                Account</a>
+                        </li>
+                        <!-- Menu Footer-->
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="javascript:void(0);" class="btn btn-default btn-flat"
+                                    style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </ul>
+    </nav>
+</header>';
 ?>
+
+
+<script>
+    // Toggle the notification list on bell click
+    document.getElementById('notification-bell').addEventListener('click', function () {
+        const list = document.getElementById('notification-list');
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    });
+</script>
+
 
 <div id="editProfileModal" class="modal fade">
     <form method="post">
@@ -526,25 +515,25 @@ if (isset($_POST['btn_saveeditProfile'])) {
 
 ?>
 <script>
-function confirmLogout() {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to log out of your account?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, log out!',
-        cancelButtonText: 'Cancel',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Redirect to logout page if user confirms
-            window.location.href = '../../logout.php';
-        } else {
-            // Optionally: Handle cancel action here (e.g., show message)
-            Swal.fire('Cancelled', 'You are still logged in!', 'info');
-        }
-    });
-}
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to log out of your account?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, log out!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to logout page if user confirms
+                window.location.href = '../../logout.php';
+            } else {
+                // Optionally: Handle cancel action here (e.g., show message)
+                Swal.fire('Cancelled', 'You are still logged in!', 'info');
+            }
+        });
+    }
 </script>
 
 <script>
@@ -620,64 +609,64 @@ function confirmLogout() {
             }
         });
 
-        
+
     });
 
-     <?php
-                            if ($_SESSION['role'] == "administrator") {
+    <?php
+    if ($_SESSION['role'] == "administrator") {
 
-                                ?>
+        ?>
 
-   // Function to check for pending approvals
-function checkForApprovals() {
-    $.ajax({
-        url: '../check_approvals.php', // Backend endpoint
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            // Log response for debugging
-            console.log('Server Response:', response);
+        // Function to check for pending approvals
+        function checkForApprovals() {
+            $.ajax({
+                url: '../check_approvals.php', // Backend endpoint
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // Log response for debugging
+                    console.log('Server Response:', response);
 
-            // Check for errors in the response
-            if (response.error) {
-                console.error('Error:', response.error);
-                return;
-            }
-
-            // Check for pending approvals
-            if (response.pendingCount > 0) {
-                Swal.fire({
-                    title: 'Pending Approvals!',
-                    text: There are ${response.pendingCount} Zone Leaders waiting for approval.,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Go to Approvals',
-                    cancelButtonText: 'Dismiss',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
+                    // Check for errors in the response
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        return;
                     }
-                });
-            }
-        },
+
+                    // Check for pending approvals
+                    if (response.pendingCount > 0) {
+                        Swal.fire({
+                            title: 'Pending Approvals!',
+                            text: There are ${ response.pendingCount } Zone Leaders waiting for approval.,
+                                icon: 'warning',
+                                    showCancelButton: true,
+                                        confirmButtonText: 'Go to Approvals',
+                                            cancelButtonText: 'Dismiss',
+                        }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
+                                                }
+                                            });
+        }
+                },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-    });
-}
+            });
+        }
 
-// Set an interval to check for approvals every 1 minute
-setInterval(checkForApprovals, 60000);
+        // Set an interval to check for approvals every 1 minute
+        setInterval(checkForApprovals, 60000);
 
-// Call immediately on page load
-checkForApprovals();
+        // Call immediately on page load
+        checkForApprovals();
 
-      <?php
-                            }
+        <?php
+    }
 
-                                ?>
+    ?>
 
 </script>
