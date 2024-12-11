@@ -361,7 +361,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
 </style>
 
 <?php
-session_start();
+
 $userid = $_SESSION['userid']; // Logged-in user ID
 
 // Fetch user details and check if the user is an administrator
