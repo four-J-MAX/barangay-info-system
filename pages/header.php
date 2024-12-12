@@ -418,8 +418,6 @@ $total_count = count($new_notifications);
 
 <?php
 
-
-
 $userid = $_SESSION['userid']; // Logged-in user ID
 
 // Fetch user details and check if the user is an administrator
@@ -487,30 +485,26 @@ if ($isAdmin) { // Only show the notification bell for admins
         </li>';
 }
 
-echo '</ul>
-        <div class="navbar-right">
-            <ul class="nav navbar-nav" style="background-color:transparent;">
-                <li class="dropdown user user-menu">
-                    <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i class="caret"></i></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li class="user-header bg-light-black" style="background-color:#0000FF;">
-                            <a href="#" class="btn btn-default btn-flat" data-toggle="modal" data-target="#editProfileModal" style="background-color: #000; color:white;">Change Account</a>
-                        </li>
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="javascript:void(0);" class="btn btn-default btn-flat" style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+echo '<li class="dropdown user user-menu">
+        <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i class="caret"></i></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="user-header bg-light-black" style="background-color:#0000FF;">
+                <a href="#" class="btn btn-default btn-flat" data-toggle="modal" data-target="#editProfileModal" style="background-color: #000; color:white;">Change Account</a>
+            </li>
+            <li class="user-footer">
+                <div class="pull-left">
+                    <a href="javascript:void(0);" class="btn btn-default btn-flat" style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>
         </div>
     </nav>
 </header>';
 ?>
-
 
 <div id="editProfileModal" class="modal fade">
     <form method="post">
@@ -745,21 +739,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                            }).then((result) => {
+                                                }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                    },
+                                        },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                                });
-                            }
+                                    });
+                                }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
