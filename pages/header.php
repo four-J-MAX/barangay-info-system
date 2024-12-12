@@ -121,6 +121,29 @@ function clean($data)
     return $data;
 }
 
+$isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
+// $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
+$zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
+
+
+$all_barangay = [
+    "Kangwayan",
+    "Kodia",
+    "Pili",
+    "Bunakan",
+    "Tabagak",
+    "Maalat",
+    "Tarong",
+    "Malbago",
+    "Mancilang",
+    "Kaongkod",
+    "San Agustin",
+    "Poblacion",
+    "Tugas",
+    "Talangnan",
+];
+
+
 $today = date("Y-m-d");
 
 // Query for new residents
@@ -722,21 +745,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                    }).then((result) => {
+                                        }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                            },
+                                },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                        });
-                    }
+                            });
+                        }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
