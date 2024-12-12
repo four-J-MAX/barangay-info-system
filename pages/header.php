@@ -431,7 +431,7 @@ echo '<header class="header">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </a>
-        <ul class="nav navbar-nav navbar-right">';
+        <ul class="nav navbar-right">';
 
 if ($isAdmin) { // Only show the notification bell for admins
     echo '<li class="dropdown" style="position: relative;">
@@ -716,21 +716,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                                }).then((result) => {
+                                                        }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                        },
+                                                },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                                    });
-                                }
+                                            });
+                                        }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
