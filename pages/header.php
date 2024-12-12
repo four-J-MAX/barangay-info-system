@@ -22,7 +22,7 @@ function clean($data)
 }
 
 $isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
-
+// $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
 $zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
 
 
@@ -105,7 +105,7 @@ $total_count =
     $result->num_rows
 ;
 
-
+//only five specific posts
 $deactive_notifications = "Select * from tblresident where  DATE(date_created) = '$today' ORDER BY id DESC LIMIT 0,5";
 $result = mysqli_query($con, $deactive_notifications);
 while ($rows = mysqli_fetch_assoc($result)) {
@@ -360,8 +360,6 @@ while ($rows = mysqli_fetch_assoc($result)) {
 </style>
 
 <?php
-
-
 
 $userid = $_SESSION['userid']; // Logged-in user ID
 
