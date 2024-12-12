@@ -15,106 +15,6 @@
 
 
 <?php
-// function clean($data)
-// {
-//     $data = htmlspecialchars(stripslashes(trim($data)));
-//     return $data;
-// }
-
-// $isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
-
-// $zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
-
-
-// $all_barangay = [
-//     "Kangwayan",
-//     "Kodia",
-//     "Pili",
-//     "Bunakan",
-//     "Tabagak",
-//     "Maalat",
-//     "Tarong",
-//     "Malbago",
-//     "Mancilang",
-//     "Kaongkod",
-//     "San Agustin",
-//     "Poblacion",
-//     "Tugas",
-//     "Talangnan",
-// ];
-
-// $today = date("Y-m-d");
-
-// $count_tblactivity = $con->query("SELECT * FROM tblactivity WHERE DATE(date_created) = '$today'");
-
-// $count_tblactivityphoto = $con->query("SELECT * FROM tblactivityphoto WHERE DATE(date_created) = '$today'");
-// $count_tblblotter = $con->query("SELECT * FROM tblblotter WHERE DATE(date_created) = '$today'");
-// $count_tblclearance = $con->query("SELECT * FROM tblclearance WHERE DATE(date_created) = '$today'");
-// $count_tblhousehold = $con->query("SELECT * FROM tblhousehold WHERE DATE(date_created) = '$today'");
-// $count_tbllogs = $con->query("SELECT * FROM tbllogs WHERE DATE(logdate) = '$today'");
-// $count_tblofficial = $con->query("SELECT * FROM tblofficial WHERE DATE(date_created) = '$today'");
-// $count_tblpermit = $con->query("SELECT * FROM tblpermit WHERE DATE(date_created) = '$today'");
-// $count_tblproject = $con->query("SELECT * FROM tblproject WHERE DATE(date_created) = '$today'");
-// $count_tblsession = $con->query("SELECT * FROM tblsession WHERE DATE(date_created) = '$today'");
-// $count_tblsettings = $con->query("SELECT * FROM tblsettings WHERE DATE(date_created) = '$today'");
-// $count_tblstaff = $con->query("SELECT * FROM tblstaff WHERE DATE(date_created) = '$today'");
-// $count_tbluser = $con->query("SELECT * FROM tbluser WHERE DATE(date_created) = '$today'");
-// $count_tblvisitor = $con->query("SELECT * FROM tblvisitor WHERE DATE(date_created) = '$today'");
-// $count_tblzone = $con->query("SELECT * FROM tblzone WHERE DATE(date_created) = '$today'");
-
-// $find_notifications = "Select * from tblresident where  DATE(date_created) = '$today'";
-// $result = mysqli_query($con, $find_notifications);
-// $count_active = '';
-// $notifications_data = array();
-// $deactive_notifications_dump = array();
-// while ($rows = mysqli_fetch_assoc($result)) {
-//     $count_active = mysqli_num_rows($result);
-//     $notifications_data[] = array(
-//         "id" => $rows['id'],
-//         "fname" => $rows['fname'],
-//         "lname" => $rows['lname'],
-//         "mname" => $rows['mname'],
-//         "datemove" => $rows['datemove']
-
-
-
-//     );
-// }
-
-
-// $total_count =
-//     $count_tblactivity->num_rows +
-//     $count_tblactivityphoto->num_rows +
-//     $count_tblblotter->num_rows +
-//     $count_tblclearance->num_rows +
-//     $count_tblhousehold->num_rows +
-//     $count_tbllogs->num_rows +
-//     $count_tblofficial->num_rows +
-//     $count_tblpermit->num_rows +
-//     $count_tblproject->num_rows +
-//     $count_tblsession->num_rows +
-//     $count_tblsettings->num_rows +
-//     $count_tblstaff->num_rows +
-//     $count_tbluser->num_rows +
-//     $count_tblvisitor->num_rows +
-//     $count_tblzone->num_rows +
-//     $result->num_rows
-// ;
-
-
-// $deactive_notifications = "Select * from tblresident where  DATE(date_created) = '$today' ORDER BY id DESC LIMIT 0,5";
-// $result = mysqli_query($con, $deactive_notifications);
-// while ($rows = mysqli_fetch_assoc($result)) {
-//     $deactive_notifications_dump[] = array(
-//         "id" => $rows['id'],
-//         "fname" => $rows['fname'],
-//         "lname" => $rows['lname'],
-//         "mname" => $rows['mname'],
-//         "datemove" => $rows['datemove']
-//     );
-// }
-
-
 function clean($data)
 {
     $data = htmlspecialchars(stripslashes(trim($data)));
@@ -122,7 +22,7 @@ function clean($data)
 }
 
 $isZoneLeader = $_SESSION['role'] == 'Zone Leader' ? true : false;
-// $zone_barangay = isset($_SESSION['*********']) ? $_SESSION['*************'] : '';
+
 $zone_barangay = isset($_SESSION['barangay']) ? $_SESSION['barangay'] : '';
 
 
@@ -143,38 +43,81 @@ $all_barangay = [
     "Talangnan",
 ];
 
-
 $today = date("Y-m-d");
 
-// Query for new residents
-$new_residents_query = "SELECT id, fname, lname, mname, datemove FROM tblnewresident WHERE DATE(datemove) = '$today'";
-$new_residents_result = $con->query($new_residents_query);
+$count_tblactivity = $con->query("SELECT * FROM tblactivity WHERE DATE(date_created) = '$today'");
 
-// Query for new households
-$new_households_query = "SELECT id, headoffamily FROM tblhousehold WHERE DATE(date_created) = '$today'";
-$new_households_result = $con->query($new_households_query); // Ensure 'created_at' exists in tblhousehold
+$count_tblactivityphoto = $con->query("SELECT * FROM tblactivityphoto WHERE DATE(date_created) = '$today'");
+$count_tblblotter = $con->query("SELECT * FROM tblblotter WHERE DATE(date_created) = '$today'");
+$count_tblclearance = $con->query("SELECT * FROM tblclearance WHERE DATE(date_created) = '$today'");
+$count_tblhousehold = $con->query("SELECT * FROM tblhousehold WHERE DATE(date_created) = '$today'");
+$count_tbllogs = $con->query("SELECT * FROM tbllogs WHERE DATE(logdate) = '$today'");
+$count_tblofficial = $con->query("SELECT * FROM tblofficial WHERE DATE(date_created) = '$today'");
+$count_tblpermit = $con->query("SELECT * FROM tblpermit WHERE DATE(date_created) = '$today'");
+$count_tblproject = $con->query("SELECT * FROM tblproject WHERE DATE(date_created) = '$today'");
+$count_tblsession = $con->query("SELECT * FROM tblsession WHERE DATE(date_created) = '$today'");
+$count_tblsettings = $con->query("SELECT * FROM tblsettings WHERE DATE(date_created) = '$today'");
+$count_tblstaff = $con->query("SELECT * FROM tblstaff WHERE DATE(date_created) = '$today'");
+$count_tbluser = $con->query("SELECT * FROM tbluser WHERE DATE(date_created) = '$today'");
+$count_tblvisitor = $con->query("SELECT * FROM tblvisitor WHERE DATE(date_created) = '$today'");
+$count_tblzone = $con->query("SELECT * FROM tblzone WHERE DATE(date_created) = '$today'");
 
-// Process notifications
-$new_notifications = [];
-while ($row = $new_residents_result->fetch_assoc()) {
-    $new_notifications[] = [
-        "type" => "resident",
-        "id" => $row['id'],
-        "name" => $row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname'],
-        "datemove" => $row['datemove'],
-    ];
+
+
+
+
+$find_notifications = "Select * from tblresident where  DATE(date_created) = '$today'";
+$result = mysqli_query($con, $find_notifications);
+$count_active = '';
+$notifications_data = array();
+$deactive_notifications_dump = array();
+while ($rows = mysqli_fetch_assoc($result)) {
+    $count_active = mysqli_num_rows($result);
+    $notifications_data[] = array(
+        "id" => $rows['id'],
+        "fname" => $rows['fname'],
+        "lname" => $rows['lname'],
+        "mname" => $rows['mname'],
+        "datemove" => $rows['datemove']
+
+
+
+    );
 }
 
-while ($row = $new_households_result->fetch_assoc()) {
-    $new_notifications[] = [
-        "type" => "household",
-        "id" => $row['id'],
-        "name" => $row['headoffamily'],
-        "datemove" => $today,
-    ];
+
+$total_count =
+    $count_tblactivity->num_rows +
+    $count_tblactivityphoto->num_rows +
+    $count_tblblotter->num_rows +
+    $count_tblclearance->num_rows +
+    $count_tblhousehold->num_rows +
+    $count_tbllogs->num_rows +
+    $count_tblofficial->num_rows +
+    $count_tblpermit->num_rows +
+    $count_tblproject->num_rows +
+    $count_tblsession->num_rows +
+    $count_tblsettings->num_rows +
+    $count_tblstaff->num_rows +
+    $count_tbluser->num_rows +
+    $count_tblvisitor->num_rows +
+    $count_tblzone->num_rows +
+    $result->num_rows
+;
+
+
+$deactive_notifications = "Select * from tblresident where  DATE(date_created) = '$today' ORDER BY id DESC LIMIT 0,5";
+$result = mysqli_query($con, $deactive_notifications);
+while ($rows = mysqli_fetch_assoc($result)) {
+    $deactive_notifications_dump[] = array(
+        "id" => $rows['id'],
+        "fname" => $rows['fname'],
+        "lname" => $rows['lname'],
+        "mname" => $rows['mname'],
+        "datemove" => $rows['datemove']
+    );
 }
 
-$total_count = count($new_notifications);
 ?>
 <style>
     /* Notification Count Badge */
@@ -209,13 +152,9 @@ $total_count = count($new_notifications);
     .fa-bell {
         position: relative;
         /* Allow badge to position relative to the bell */
-        font-size: 10px;
+        font-size: 20px;
         color: black;
         margin: 1.5rem 0.4rem !important;
-    }
-
-    .navbar-nav {
-        background-color: none !important;
     }
 
     /* Notification Dropdown */
@@ -422,16 +361,18 @@ $total_count = count($new_notifications);
 
 <?php
 
+
+
 $userid = $_SESSION['userid']; // Logged-in user ID
 
 // Fetch user details and check if the user is an administrator
 $query = "
-        SELECT u.type, s.name, s.logo 
-        FROM tbluser u 
-        INNER JOIN tblsettings s 
-        ON u.id = s.user_id 
-        WHERE u.id = '$userid' AND u.deleted = 0
-    ";
+    SELECT u.type, s.name, s.logo 
+    FROM tbluser u 
+    INNER JOIN tblsettings s 
+    ON u.id = s.user_id 
+    WHERE u.id = '$userid' AND u.deleted = 0
+";
 $squery = mysqli_query($con, $query);
 
 if ($squery && mysqli_num_rows($squery) > 0) {
@@ -449,35 +390,40 @@ if ($squery && mysqli_num_rows($squery) > 0) {
 $total_count = isset($total_count) ? $total_count : 0; // Ensure $total_count is defined
 
 echo '<header class="header">
-        <a href="#" class="logo">
-            <img src="../../images/' . $logo . '" style="height: 50px; width: 50px; float: left; margin-left: -10px;">
-            <p style="font-size: 12px; font-family: Arial, sans-serif;">' . $name . '</p>
+    <a href="#" class="logo">
+        <img src="../../images/' . $logo . '" style="height: 50px; width: 50px; float: left; margin-left: -10px;">
+        <p style="font-size: 12px; font-family: Arial, sans-serif;">' . $name . '</p>
+    </a>
+    <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
         </a>
-        <nav class="navbar navbar-static-top" role="navigation">
-            <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <ul class="nav navbar-right">';
+        <ul class="nav navbar-nav navbar-right">';
 
 if ($isAdmin) { // Only show the notification bell for admins
     echo '<li class="dropdown" style="position: relative;">
-                <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-bell" style="font-size:17px;color:black;margin:1.5rem 0.4rem;"></i>';
-    if ($total_count > 0) {
+            <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell" style="font-size:20px;color:black;margin:1.5rem 0.4rem;"></i>';
+    if (!empty($total_count)) {
         echo '<div class="round" id="bell-count"><span>' . $total_count . '</span></div>';
     }
     echo '</a>
-            <ul class="dropdown-menu" aria-labelledby="notif-bell" style="max-height: 300px; overflow-y: auto; width: 300px;">';
+          <ul class="dropdown-menu" aria-labelledby="notif-bell" style="max-height: 300px; overflow-y: auto; width: 300px;">';
 
-    if ($total_count > 0) {
-        foreach ($new_notifications as $notif) {
-            $type = $notif['type'] === 'resident' ? 'New Resident' : 'New Household';
+    if (!empty($notifications_data)) {
+        foreach ($notifications_data as $notif) {
             echo '<li style="padding: 10px; border-bottom: 1px solid #ccc;">
-                    <strong>' . $notif['name'] . '</strong><br>
-                    <small>Type: ' . $type . '</small><br>
+                    <strong>' . $notif['fname'] . ' ' . $notif['mname'] . ' ' . $notif['lname'] . '</strong><br>
+                    <small>Date Move In: ' . $notif['datemove'] . '</small>
+                  </li>';
+        }
+    } elseif (!empty($deactive_notifications_dump)) {
+        foreach ($deactive_notifications_dump as $notif) {
+            echo '<li style="padding: 10px; border-bottom: 1px solid #ccc;">
+                    <strong>' . $notif['fname'] . ' ' . $notif['mname'] . ' ' . $notif['lname'] . '</strong><br>
                     <small>Date Move In: ' . $notif['datemove'] . '</small>
                   </li>';
         }
@@ -747,21 +693,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                                            }).then((result) => {
+                                }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                                    },
+                        },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                                                });
-                                            }
+                    });
+                }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
