@@ -461,7 +461,7 @@ echo '<header class="header">
 if ($isAdmin) { // Only show the notification bell for admins
     echo '<li class="dropdown" style="position: relative;">
                 <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-bell" style="font-size:10px;color:black;margin:1.5rem 0.4rem;"></i>';
+                    <i class="fa fa-bell" style="font-size:17px;color:black;margin:1.5rem 0.4rem;"></i>';
     if ($total_count > 0) {
         echo '<div class="round" id="bell-count"><span>' . $total_count . '</span></div>';
     }
@@ -743,21 +743,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                                }).then((result) => {
+                                                    }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                        },
+                                            },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                                    });
-                                }
+                                        });
+                                    }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
