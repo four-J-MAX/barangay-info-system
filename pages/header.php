@@ -460,7 +460,7 @@ echo '<header class="header">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <ul class="nav navbar-nav navbar-right">';
+            <ul class="nav navbar-right">';
 
 if ($isAdmin) { // Only show the notification bell for admins
     echo '<li class="dropdown" style="position: relative;">
