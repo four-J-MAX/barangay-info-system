@@ -416,57 +416,57 @@ $total_count = count($new_notifications);
     }
 </style>
 
-<?php
+    <?php
 
-$userid = $_SESSION['userid']; // Logged-in user ID
+    $userid = $_SESSION['userid']; // Logged-in user ID
 
-// Fetch user details and check if the user is an administrator
-$query = "
-    SELECT u.type, s.name, s.logo 
-    FROM tbluser u 
-    INNER JOIN tblsettings s 
-    ON u.id = s.user_id 
-    WHERE u.id = '$userid' AND u.deleted = 0
-";
-$squery = mysqli_query($con, $query);
+    // Fetch user details and check if the user is an administrator
+    $query = "
+        SELECT u.type, s.name, s.logo 
+        FROM tbluser u 
+        INNER JOIN tblsettings s 
+        ON u.id = s.user_id 
+        WHERE u.id = '$userid' AND u.deleted = 0
+    ";
+    $squery = mysqli_query($con, $query);
 
-if ($squery && mysqli_num_rows($squery) > 0) {
-    $data = mysqli_fetch_assoc($squery);
-    $isAdmin = $data['type'] === 'administrator';
-    $name = $data['name'];
-    $logo = $data['logo'];
-} else {
-    // Default values if no data is found or the user is not an administrator
-    $isAdmin = false;
-    $name = 'Barangay Management System';
-    $logo = 'madridejos.png'; // Replace with a default image path
-}
-
-$total_count = isset($total_count) ? $total_count : 0; // Ensure $total_count is defined
-
-echo '<header class="header">
-    <a href="#" class="logo">
-        <img src="../../images/' . $logo . '" style="height: 50px; width: 50px; float: left; margin-left: -10px;">
-        <p style="font-size: 12px; font-family: Arial, sans-serif;">' . $name . '</p>
-    </a>
-    <nav class="navbar navbar-static-top" role="navigation">
-        <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </a>
-        <ul class="nav navbar-nav navbar-right">';
-
-if ($isAdmin) { // Only show the notification bell for admins
-    echo '<li class="dropdown" style="position: relative;">
-            <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
-                <i class="fa fa-bell" style="font-size:20px;color:black;margin:1.5rem 0.4rem;"></i>';
-    if ($total_count > 0) {
-        echo '<div class="round" id="bell-count"><span>' . $total_count . '</span></div>';
+    if ($squery && mysqli_num_rows($squery) > 0) {
+        $data = mysqli_fetch_assoc($squery);
+        $isAdmin = $data['type'] === 'administrator';
+        $name = $data['name'];
+        $logo = $data['logo'];
+    } else {
+        // Default values if no data is found or the user is not an administrator
+        $isAdmin = false;
+        $name = 'Barangay Management System';
+        $logo = 'madridejos.png'; // Replace with a default image path
     }
-    echo '</a>
-          <ul class="dropdown-menu" aria-labelledby="notif-bell" style="max-height: 300px; overflow-y: auto; width: 300px;">';
+
+    $total_count = isset($total_count) ? $total_count : 0; // Ensure $total_count is defined
+
+    echo '<header class="header">
+        <a href="#" class="logo">
+            <img src="../../images/' . $logo . '" style="height: 50px; width: 50px; float: left; margin-left: -10px;">
+            <p style="font-size: 12px; font-family: Arial, sans-serif;">' . $name . '</p>
+        </a>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <ul class="nav navbar-nav navbar-right">';
+
+    if ($isAdmin) { // Only show the notification bell for admins
+        echo '<li class="dropdown" style="position: relative;">
+                <a href="#" class="dropdown-toggle" id="notif-bell" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-bell" style="font-size:20px;color:black;margin:1.5rem 0.4rem;"></i>';
+        if ($total_count > 0) {
+            echo '<div class="round" id="bell-count"><span>' . $total_count . '</span></div>';
+        }
+        echo '</a>
+            <ul class="dropdown-menu" aria-labelledby="notif-bell" style="max-height: 300px; overflow-y: auto; width: 300px;">';
 
     if ($total_count > 0) {
         foreach ($new_notifications as $notif) {
@@ -485,26 +485,30 @@ if ($isAdmin) { // Only show the notification bell for admins
         </li>';
 }
 
-echo '<li class="dropdown user user-menu">
-        <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
-            <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i class="caret"></i></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li class="user-header bg-light-black" style="background-color:#0000FF;">
-                <a href="#" class="btn btn-default btn-flat" data-toggle="modal" data-target="#editProfileModal" style="background-color: #000; color:white;">Change Account</a>
-            </li>
-            <li class="user-footer">
-                <div class="pull-left">
-                    <a href="javascript:void(0);" class="btn btn-default btn-flat" style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
-                </div>
-            </li>
-        </ul>
-    </li>
-</ul>
+echo '</ul>
+        <div class="navbar-right">
+            <ul class="nav navbar-nav" style="background-color:transparent;">
+                <li class="dropdown user user-menu">
+                    <a href="resident" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="glyphicon glyphicon-user"></i><span>' . $_SESSION['barangay'] . '<i class="caret"></i></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="user-header bg-light-black" style="background-color:#0000FF;">
+                            <a href="#" class="btn btn-default btn-flat" data-toggle="modal" data-target="#editProfileModal" style="background-color: #000; color:white;">Change Account</a>
+                        </li>
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="javascript:void(0);" class="btn btn-default btn-flat" style="background-color: #000; color:white;" onclick="confirmLogout()">Sign out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </nav>
 </header>';
 ?>
+
 
 <div id="editProfileModal" class="modal fade">
     <form method="post">
@@ -739,21 +743,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                                }).then((result) => {
+                                            }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                        },
+                                    },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                                    });
-                                }
+                                });
+                            }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
