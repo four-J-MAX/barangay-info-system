@@ -128,7 +128,7 @@ $new_residents_query = "SELECT id, fname, lname, mname, datemove FROM tblnewresi
 $new_residents_result = $con->query($new_residents_query);
 
 // Query for new households
-$new_households_query = "SELECT id, headoffamily FROM tblhousehold WHERE DATE(created_at) = '$today'";
+$new_households_query = "SELECT id, headoffamily FROM tblhousehold WHERE DATE(date_created) = '$today'";
 $new_households_result = $con->query($new_households_query); // Ensure 'created_at' exists in tblhousehold
 
 // Process notifications
@@ -722,21 +722,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                }).then((result) => {
+                                    }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                        },
+                            },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                    });
-                }
+                        });
+                    }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
