@@ -209,7 +209,7 @@ $total_count = count($new_notifications);
     .fa-bell {
         position: relative;
         /* Allow badge to position relative to the bell */
-        font-size: 20px;
+        font-size: 10px;
         color: black;
         margin: 1.5rem 0.4rem !important;
     }
@@ -745,21 +745,21 @@ if (isset($_POST['btn_saveeditProfile'])) {
                                     showCancelButton: true,
                                         confirmButtonText: 'Go to Approvals',
                                             cancelButtonText: 'Dismiss',
-                                        }).then((result) => {
+                                            }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = 'https://barangayportal.com/pages/user/user.php'; // Redirect to the user page
                                                 }
                                             });
         }
-                                },
+                                    },
         error: function(xhr, status, error) {
             // Log AJAX errors
             console.error('Error fetching pending approvals:', error);
             console.error('Response status:', status);
             console.error('Response text:', xhr.responseText);
         }
-                            });
-                        }
+                                });
+                            }
 
         // Set an interval to check for approvals every 1 minute
         setInterval(checkForApprovals, 60000);
