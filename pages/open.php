@@ -13,121 +13,54 @@ try {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
 
-    // Get all columns from the table
-    $columnsQuery = "SHOW COLUMNS FROM tbluser";
-    $columnsResult = $conn->query($columnsQuery);
+    // Email to insert
+    $email = 'jossygonia@gmail.com';
+    $userId = 1; // Specifically targeting ID = 1
+
+    // Prepare the update query for ID = 1
+    $sql = "UPDATE tbluser SET email = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
     
-    if (!$columnsResult) {
-        throw new Exception("Error fetching columns: " . $conn->error);
+    if (!$stmt) {
+        throw new Exception("Error preparing statement: " . $conn->error);
     }
 
-    // Get all data from the table
-    $dataQuery = "SELECT * FROM tbluser";
-    $dataResult = $conn->query($dataQuery);
+    $stmt->bind_param("si", $email, $userId);
     
-    if (!$dataResult) {
-        throw new Exception("Error fetching data: " . $conn->error);
+    if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
+            echo "Success: Email updated successfully!<br>";
+            echo "Email '" . htmlspecialchars($email) . "' has been added to user ID: " . $userId;
+        } else {
+            echo "No update was made. Either ID=1 doesn't exist or it already has this email.";
+        }
+    } else {
+        throw new Exception("Error executing statement: " . $stmt->error);
     }
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TblUser Data</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .container {
-            padding: 20px;
-            max-width: 100%;
-            overflow-x: auto;
-        }
-        h1 {
-            color: #333;
-        }
-        .column-info {
-            margin-bottom: 20px;
-        }
-        .column-info table {
-            width: auto;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>TblUser Table Structure and Data</h1>
+    $stmt->close();
 
-        <!-- Display Column Information -->
-        <h2>Table Structure</h2>
-        <div class="column-info">
-            <table>
-                <tr>
-                    <th>Column Name</th>
-                    <th>Type</th>
-                    <th>Null</th>
-                    <th>Key</th>
-                    <th>Default</th>
-                    <th>Extra</th>
-                </tr>
-                <?php while ($column = $columnsResult->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($column['Field']); ?></td>
-                    <td><?php echo htmlspecialchars($column['Type']); ?></td>
-                    <td><?php echo htmlspecialchars($column['Null']); ?></td>
-                    <td><?php echo htmlspecialchars($column['Key']); ?></td>
-                    <td><?php echo $column['Default'] !== null ? htmlspecialchars($column['Default']) : 'NULL'; ?></td>
-                    <td><?php echo htmlspecialchars($column['Extra']); ?></td>
-                </tr>
-                <?php endwhile; ?>
-            </table>
-        </div>
-
-        <!-- Display Table Data -->
-        <h2>Table Data</h2>
-        <table>
-            <tr>
-                <?php
-                // Reset column result pointer
-                $columnsResult->data_seek(0);
-                while ($column = $columnsResult->fetch_assoc()) {
-                    echo "<th>" . htmlspecialchars($column['Field']) . "</th>";
-                }
-                ?>
-            </tr>
-            <?php while ($row = $dataResult->fetch_assoc()): ?>
-            <tr>
-                <?php foreach ($row as $value): ?>
-                <td><?php echo htmlspecialchars($value ?? 'NULL'); ?></td>
-                <?php endforeach; ?>
-            </tr>
-            <?php endwhile; ?>
-        </table>
-    </div>
-</body>
-</html>
-
-<?php
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
+} finally {
+    if (isset($conn)) {
+        $conn->close();
+    }
+}
+
+// Verify the update by selecting the record
+try {
+    $conn = new mysqli($host, $username, $password, $dbname);
+    $verifyQuery = "SELECT id, email FROM tbluser WHERE id = 1";
+    $result = $conn->query($verifyQuery);
+    
+    if ($result && $row = $result->fetch_assoc()) {
+        echo "<br><br>Verification:<br>";
+        echo "User ID: " . $row['id'] . "<br>";
+        echo "Email: " . htmlspecialchars($row['email'] ?? 'NULL');
+    }
+} catch (Exception $e) {
+    echo "Verification Error: " . $e->getMessage();
 } finally {
     if (isset($conn)) {
         $conn->close();
