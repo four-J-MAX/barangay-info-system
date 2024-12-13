@@ -1,5 +1,4 @@
-
-
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,16 +30,11 @@
             max-width: 400px;
         }
 
-        .form-content-box h3 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .form-content-box .form-group {
+        .form-group {
             margin-bottom: 15px;
         }
 
-        .form-content-box .form-group input {
+        .form-group input {
             width: 90%;
             padding: 10px;
             border: 2px solid #ddd;
@@ -47,7 +42,7 @@
             box-shadow: 0 0 3px black;
         }
 
-        .form-content-box .btn-submit {
+        .btn-submit {
             background: #007BFF;
             color: #fff;
             border: none;
@@ -58,29 +53,81 @@
             box-shadow: 0 0 10px #0056b3;
         }
 
-        .form-content-box .btn-submit:hover {
+        .btn-submit:hover {
             background: #0056b3;
         }
     </style>
 </head>
 <body>
-    <section class="bg-grey">
-        <div class="form-content-box">
-            <div class="login-header">
-                <center><h1 class="text-center">Reset Password</h1></center>
+    <div class="form-content-box">
+        <center><h1>Reset Password</h1></center>
+        <form id="resetForm">
+            <div class="form-group">
+                <input type="email" name="email" id="email" placeholder="Enter your email" required>
             </div>
-            <div class="details">
-                <form action="" method="post">
-                    <div class="form-group">
-                        <input type="email" name="email" placeholder="Enter your email" autocomplete="on" required class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" name="reset" class="btn btn-submit">Send Link</button>
-                    </div>
-                </form>
+            <div class="form-group">
+                <button type="submit" class="btn-submit">Send Reset Link</button>
             </div>
-            
-        </div>
-    </section>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#resetForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const email = $('#email').val();
+
+                // First confirmation
+                Swal.fire({
+                    title: 'Confirm',
+                    text: 'Are you sure you want to send a password reset link?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, send it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Sending...',
+                            text: 'Please wait while we process your request.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Send AJAX request
+                        $.ajax({
+                            url: 'forgot_password.php',
+                            type: 'POST',
+                            data: { email: email },
+                            dataType: 'json',
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: response.icon,
+                                    title: response.title,
+                                    text: response.text
+                                }).then(() => {
+                                    if (response.icon === 'success') {
+                                        // Optional: redirect after success
+                                        // window.location.href = 'login.php';
+                                    }
+                                });
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An error occurred. Please try again later.'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
