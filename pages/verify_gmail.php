@@ -27,11 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Generate a 5-digit verification code
         $verificationCode = rand(10000, 99999);
         
+        // Generate a new token
+        $newToken = bin2hex(random_bytes(16)); // Generates a 32-character hexadecimal token
+        
         // Set expiration time for the code (e.g., 15 minutes from now)
         $expirationTime = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
-        // Save the code and expiration time in the database
-        $updateQuery = "UPDATE tbluser SET code = '$verificationCode', reset_code_at = '$expirationTime' WHERE id = 1";
+        // Save the code, token, and expiration time in the database
+        $updateQuery = "UPDATE tbluser SET code = '$verificationCode', token = '$newToken', reset_code_at = '$expirationTime' WHERE id = 1";
         if (!mysqli_query($con, $updateQuery)) {
             echo json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to update the database.']);
             exit;
