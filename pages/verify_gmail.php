@@ -1,8 +1,18 @@
 <?php
 require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Establishing Connection with Server
-$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay') or die(mysqli_error($con));
+$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay');
+
+if (!$con) {
+    echo json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to connect to the database.']);
+    exit;
+}
 
 date_default_timezone_set("Asia/Manila");
 
@@ -22,7 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Save the code and expiration time in the database
         $updateQuery = "UPDATE tbluser SET code = '$verificationCode', code_reset_at = '$expirationTime' WHERE id = 1";
-        mysqli_query($con, $updateQuery);
+        if (!mysqli_query($con, $updateQuery)) {
+            echo json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to update the database.']);
+            exit;
+        }
 
         // Prepare the email
         $mail = new PHPMailer\PHPMailer\PHPMailer();
