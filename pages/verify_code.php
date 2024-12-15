@@ -21,7 +21,7 @@ function verifyCode($userInputCode) {
         // Compare the stored code with the user input
         if ($storedCode === $userInputCode) {
             // Redirect to index.php with the token if the code matches
-            header("Location: index.php?token=" . urlencode($token));
+            header("Location: ../login.php?token=" . urlencode($token));
             exit();
         } else {
             // Return an error message if the code does not match
