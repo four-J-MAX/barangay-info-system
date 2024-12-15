@@ -11,7 +11,7 @@ function clean($data)
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-include 'pages/connection.php';
+include 'pages/dbcon.php';
 // Security headers
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';");

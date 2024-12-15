@@ -1,7 +1,7 @@
 <?php
 // Establishing Connection with Server
 
-include 'pages/connection.php';
+include 'pages/dbcon.php';
 
 // Set the default timezone
 date_default_timezone_set("Asia/Manila");

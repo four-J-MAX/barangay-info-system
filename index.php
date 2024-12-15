@@ -12,8 +12,7 @@ function clean($data)
 }
 
 
-include 'pages/connection.php';
-
+include 'pages/dbcon.php';
 // Check if the user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['role']) && !isset($_SESSION['userid']) && !isset($_SESSION['barangay'])) {
     header('Location: login.php');

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'connection.php';
+include 'dbcon.php';
 
 // Check if token is provided in the URL
 if (!isset($_GET['token'])) {
