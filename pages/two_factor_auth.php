@@ -111,7 +111,7 @@
                             if (response.icon === 'success') {
                                 // Replace the form with a new form
                                 const newFormHtml = `
-                                    <form id="newForm">
+                                    <form id="newForm" method="POST" action="verify_code.php">
                                         <div class="form-group">
                                             <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
                                         </div>
