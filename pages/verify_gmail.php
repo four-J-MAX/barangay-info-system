@@ -6,8 +6,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Establishing Connection with Server
+$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay');
 
-include 'pages/dbcon.php';
+if (!$con) {
+    echo json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to connect to the database.']);
+    exit;
+}
 
 date_default_timezone_set("Asia/Manila");
 
