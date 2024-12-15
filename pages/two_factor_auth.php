@@ -60,7 +60,7 @@
 </head>
 <body>
     <div class="form-content-box">
-        <center><h1>Reset Password</h1></center>
+        <center><h1>Verify Your Admin Gmail</h1></center>
         <form id="resetForm">
             <div class="form-group">
                 <input type="email" name="email" id="email" placeholder="Enter your email" required>
