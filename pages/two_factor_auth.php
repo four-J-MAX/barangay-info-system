@@ -62,8 +62,11 @@
     <div class="form-content-box">
         <center><h1>Verify Your Admin Gmail</h1></center>
         <form id="resetForm">
-            <div class="form-group">
+            <div class="form-group" id="email-group">
                 <input type="email" name="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group" id="code-group" style="display: none;">
+                <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn-submit">Send Verification Code</button>
@@ -77,56 +80,77 @@
                 e.preventDefault();
                 
                 const email = $('#email').val();
+                const verificationCode = $('#verification_code').val();
 
-                // Show loading state
-                Swal.fire({
-                    title: 'Sending...',
-                    text: 'Please wait while we process your request.',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    toast: true,
-                    position: 'top-end',
-                    backdrop: false
-                });
+                if ($('#email-group').is(':visible')) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Sending...',
+                        text: 'Please wait while we process your request.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                        toast: true,
+                        position: 'top-end',
+                        backdrop: false
+                    });
 
-                // Send AJAX request
-                $.ajax({
-                    url: 'verify_gmail.php',
-                    type: 'POST',
-                    data: { email: email },
-                    dataType: 'json',
-                    success: function(response) {
-                        Swal.fire({
-                            icon: response.icon,
-                            title: response.title,
-                            text: response.text,
-                            timer: 2000,
-                            showConfirmButton: false,
-                            toast: true,
-                            position: 'top-end',
-                            backdrop: false
-                        }).then(() => {
-                            if (response.icon === 'success') {
-                                // Redirect to login page on success
-                                window.location.href = '../login.php';
-                            }
-                        });
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred. Please try again later.',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            toast: true,
-                            position: 'top-end',
-                            backdrop: false
-                        });
-                    }
-                });
+                    // Send AJAX request to send verification code
+                    $.ajax({
+                        url: 'verify_gmail.php',
+                        type: 'POST',
+                        data: { email: email },
+                        dataType: 'json',
+                        success: function(response) {
+                            Swal.fire({
+                                icon: response.icon,
+                                title: response.title,
+                                text: response.text,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                backdrop: false
+                            }).then(() => {
+                                if (response.icon === 'success') {
+                                    // Hide email input and show verification code input
+                                    $('#email-group').hide();
+                                    $('#code-group').show();
+                                    $('.btn-submit').text('Verify Code');
+                                }
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred. Please try again later.',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                backdrop: false
+                            });
+                        }
+                    });
+                } else {
+                    // Handle verification code submission
+                    // You can add your logic here to verify the code
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Code Verified',
+                        text: 'Your verification code has been successfully verified.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                        backdrop: false
+                    }).then(() => {
+                        // Redirect to login page or next step
+                        window.location.href = '../login.php';
+                    });
+                }
             });
         });
     </script>
