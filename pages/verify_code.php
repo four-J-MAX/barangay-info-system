@@ -9,13 +9,13 @@ date_default_timezone_set("Asia/Manila");
 function verifyCode($userInputCode) {
     global $con;
 
-    // Fetch the verification code for user with id=1
-    $query = "SELECT verification FROM tbluser WHERE id=1";
+    // Fetch the code for user with id=1
+    $query = "SELECT code FROM tbluser WHERE id=1";
     $result = mysqli_query($con, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-        $storedCode = $row['verification'];
+        $storedCode = $row['code'];
 
         // Compare the stored code with the user input
         if ($storedCode === $userInputCode) {
