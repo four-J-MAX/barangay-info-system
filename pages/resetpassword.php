@@ -85,7 +85,10 @@
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
-                    }
+                    },
+                    toast: true,
+                    position: 'top-end',
+                    backdrop: false
                 });
 
                 // Send AJAX request
@@ -102,7 +105,8 @@
                             timer: 2000,
                             showConfirmButton: false,
                             toast: true,
-                            position: 'top-end'
+                            position: 'top-end',
+                            backdrop: false
                         }).then(() => {
                             if (response.icon === 'success') {
                                 // Optional: redirect after success
@@ -118,7 +122,8 @@
                             timer: 2000,
                             showConfirmButton: false,
                             toast: true,
-                            position: 'top-end'
+                            position: 'top-end',
+                            backdrop: false
                         });
                     }
                 });
