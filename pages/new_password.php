@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'connection.php';
+include 'dbcon.php';
 
 // Check if token is provided in the URL
 if (!isset($_GET['token'])) {
@@ -111,62 +111,77 @@ mysqli_close($con);
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#newPasswordForm').on('submit', function(e) {
-                e.preventDefault();
-                
-                const newPassword = $('#new_password').val();
-                const confirmPassword = $('#confirm_password').val();
+       $(document).ready(function() {
+    $('#newPasswordForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const newPassword = $('#new_password').val();
+        const confirmPassword = $('#confirm_password').val();
 
-                if (newPassword !== confirmPassword) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Passwords do not match',
-                        text: 'Please ensure both passwords are the same.',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: 'top-end'
-                    });
-                    return;
-                }
+        // Password strength validation
+        const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordStrengthRegex.test(newPassword)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Weak Password',
+                text: 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.',
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+            return;
+        }
 
-                // Send AJAX request to update the password
-                $.ajax({
-                    url: 'update_password.php',
-                    type: 'POST',
-                    data: { new_password: newPassword },
-                    dataType: 'json',
-                    success: function(response) {
-                        Swal.fire({
-                            icon: response.icon,
-                            title: response.title,
-                            text: response.text,
-                            timer: 2000,
-                            showConfirmButton: false,
-                            toast: true,
-                            position: 'top-end'
-                        }).then(() => {
-                            if (response.icon === 'success') {
-                                // Redirect to login page on success
-                                window.location.href = '../login.php';
-                            }
-                        });
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred. Please try again later.',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            toast: true,
-                            position: 'top-end'
-                        });
+        if (newPassword !== confirmPassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Passwords do not match',
+                text: 'Please ensure both passwords are the same.',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+            return;
+        }
+
+        // Send AJAX request to update the password
+        $.ajax({
+            url: 'update_password.php',
+            type: 'POST',
+            data: { new_password: newPassword },
+            dataType: 'json',
+            success: function(response) {
+                Swal.fire({
+                    icon: response.icon,
+                    title: response.title,
+                    text: response.text,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                }).then(() => {
+                    if (response.icon === 'success') {
+                        // Redirect to login page on success
+                        window.location.href = '../login.php';
                     }
                 });
-            });
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again later.',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            }
         });
+    });
+});
     </script>
 </body>
 </html>
