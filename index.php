@@ -11,12 +11,8 @@ function clean($data)
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-// Establishing Connection with Server
-$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay');
 
-if (!$con) {
-    die(json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to connect to the database.']));
-}
+include 'pages/connection.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['role']) && !isset($_SESSION['userid']) && !isset($_SESSION['barangay'])) {

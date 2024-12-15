@@ -11,13 +11,7 @@ function clean($data)
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-// Establishing Connection with Server
-$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay');
-
-if (!$con) {
-    die(json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to connect to the database.']));
-}
-
+include 'pages/connection.php';
 // Security headers
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';");
