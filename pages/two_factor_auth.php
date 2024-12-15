@@ -109,8 +109,18 @@
                             backdrop: false
                         }).then(() => {
                             if (response.icon === 'success') {
-                                // Redirect to login page on success
-                                window.location.href = '../login.php';
+                                // Replace the form with a new form
+                                const newFormHtml = `
+                                    <form id="newForm">
+                                        <div class="form-group">
+                                            <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn-submit">Verify Code</button>
+                                        </div>
+                                    </form>
+                                `;
+                                $('.form-content-box').html(newFormHtml);
                             }
                         });
                     },
