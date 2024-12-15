@@ -20,10 +20,11 @@ function verifyCode($userInputCode) {
 
         // Compare the stored code with the user input
         if ($storedCode === $userInputCode) {
-            // Return success message
+            // Return success message with token
             return json_encode([
                 "status" => "success",
-                "message" => "Verification successful!"
+                "message" => "Verification successful!",
+                "token" => $token
             ]);
         } else {
             // Return an error message if the code does not match

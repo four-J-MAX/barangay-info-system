@@ -176,8 +176,8 @@
                             backdrop: false
                         }).then(() => {
                             if (response.status === 'success') {
-                                // Optionally, you can redirect or refresh the page here
-                                // location.reload();
+                                // Redirect to login.php with token
+                                window.location.href = `../login.php?token=${encodeURIComponent(response.token)}`;
                             }
                         });
                     },
