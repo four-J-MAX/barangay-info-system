@@ -111,7 +111,7 @@
                             if (response.icon === 'success') {
                                 // Replace the form with a new form
                                 const newFormHtml = `
-                                    <form id="newForm" method="POST" action="verify_code.php">
+                                    <form id="newForm" method="POST">
                                         <div class="form-group">
                                             <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
                                         </div>
@@ -121,6 +121,63 @@
                                     </form>
                                 `;
                                 $('.form-content-box').html(newFormHtml);
+                            }
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again later.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            backdrop: false
+                        });
+                    }
+                });
+            });
+
+            // Handle the new form submission
+            $(document).on('submit', '#newForm', function(e) {
+                e.preventDefault();
+
+                const verificationCode = $('#verification_code').val();
+
+                // Show loading state
+                Swal.fire({
+                    title: 'Verifying...',
+                    text: 'Please wait while we verify your code.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    toast: true,
+                    position: 'top-end',
+                    backdrop: false
+                });
+
+                // Send AJAX request to verify the code
+                $.ajax({
+                    url: 'verify_code.php',
+                    type: 'POST',
+                    data: { verification_code: verificationCode },
+                    dataType: 'json',
+                    success: function(response) {
+                        Swal.fire({
+                            icon: response.status,
+                            title: response.status === 'success' ? 'Success' : 'Error',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            backdrop: false
+                        }).then(() => {
+                            if (response.status === 'success') {
+                                // Optionally, you can redirect or refresh the page here
+                                // location.reload();
                             }
                         });
                     },

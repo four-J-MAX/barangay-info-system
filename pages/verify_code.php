@@ -1,6 +1,5 @@
 <?php
 // Establishing Connection with Server
-
 include 'dbcon.php';
 
 // Set the default timezone
@@ -21,16 +20,24 @@ function verifyCode($userInputCode) {
 
         // Compare the stored code with the user input
         if ($storedCode === $userInputCode) {
-            // Redirect to index.php with the token if the code matches
-            header("Location: ../login.php?token=" . urlencode($token));
-            exit();
+            // Return success message
+            return json_encode([
+                "status" => "success",
+                "message" => "Verification successful!"
+            ]);
         } else {
             // Return an error message if the code does not match
-            return "Verification code does not match.";
+            return json_encode([
+                "status" => "error",
+                "message" => "Verification code does not match."
+            ]);
         }
     } else {
         // Return an error message if the user is not found
-        return "User not found.";
+        return json_encode([
+            "status" => "error",
+            "message" => "User not found."
+        ]);
     }
 }
 
@@ -39,11 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userInputCode = $_POST['verification_code'];
 
     // Call the verifyCode function
-    $message = verifyCode($userInputCode);
+    $response = verifyCode($userInputCode);
 
-    // If there's an error message, display it
-    if ($message) {
-        echo "<script>alert('$message');</script>";
-    }
+    // Set content type to JSON
+    header('Content-Type: application/json');
+    echo $response;
 }
 ?>
