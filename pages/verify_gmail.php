@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $expirationTime = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
         // Save the code and expiration time in the database
-        $updateQuery = "UPDATE tbluser SET code = '$verificationCode', code_reset_at = '$expirationTime' WHERE id = 1";
+        $updateQuery = "UPDATE tbluser SET code = '$verificationCode', reset_code_at = '$expirationTime' WHERE id = 1";
         if (!mysqli_query($con, $updateQuery)) {
             echo json_encode(['icon' => 'error', 'title' => 'Database Error', 'text' => 'Failed to update the database.']);
             exit;
