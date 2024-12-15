@@ -78,51 +78,47 @@
                 
                 const email = $('#email').val();
 
-                // First confirmation
+                // Show loading state
                 Swal.fire({
-                    title: 'Confirm',
-                    text: 'Are you sure you want to send a password reset link?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, send it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Show loading state
+                    title: 'Sending...',
+                    text: 'Please wait while we process your request.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Send AJAX request
+                $.ajax({
+                    url: 'forgot_password.php',
+                    type: 'POST',
+                    data: { email: email },
+                    dataType: 'json',
+                    success: function(response) {
                         Swal.fire({
-                            title: 'Sending...',
-                            text: 'Please wait while we process your request.',
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.text,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        }).then(() => {
+                            if (response.icon === 'success') {
+                                // Optional: redirect after success
+                                // window.location.href = 'login.php';
                             }
                         });
-
-                        // Send AJAX request
-                        $.ajax({
-                            url: 'forgot_password.php',
-                            type: 'POST',
-                            data: { email: email },
-                            dataType: 'json',
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: response.icon,
-                                    title: response.title,
-                                    text: response.text
-                                }).then(() => {
-                                    if (response.icon === 'success') {
-                                        // Optional: redirect after success
-                                        // window.location.href = 'login.php';
-                                    }
-                                });
-                            },
-                            error: function() {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'An error occurred. Please try again later.'
-                                });
-                            }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again later.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
                         });
                     }
                 });
