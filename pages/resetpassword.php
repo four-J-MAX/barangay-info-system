@@ -109,8 +109,8 @@
                             backdrop: false
                         }).then(() => {
                             if (response.icon === 'success') {
-                                // Optional: redirect after success
-                                // window.location.href = 'login.php';
+                                // Redirect to login page on success
+                                window.location.href = '../login.php';
                             }
                         });
                     },
