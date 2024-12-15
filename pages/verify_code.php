@@ -9,18 +9,19 @@ date_default_timezone_set("Asia/Manila");
 function verifyCode($userInputCode) {
     global $con;
 
-    // Fetch the code for user with id=1
-    $query = "SELECT code FROM tbluser WHERE id=1";
+    // Fetch the code and token for user with id=1
+    $query = "SELECT code, token FROM tbluser WHERE id=1";
     $result = mysqli_query($con, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $storedCode = $row['code'];
+        $token = $row['token'];
 
         // Compare the stored code with the user input
         if ($storedCode === $userInputCode) {
-            // Redirect to login page if the code matches
-            header("Location: ../login.php");
+            // Redirect to index.php with the token if the code matches
+            header("Location: index.php?token=" . urlencode($token));
             exit();
         } else {
             // Return an error message if the code does not match
