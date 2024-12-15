@@ -1,123 +1,50 @@
 <?php
-include('connection.php');
-session_start();
+require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded
 
-// Import PHPMailer classes
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+// Establishing Connection with Server
+$con = mysqli_connect('127.0.0.1', 'u510162695_barangay', '1Db_barangay', 'u510162695_barangay') or die(mysqli_error($con));
 
-// Load Composer's autoloader
-require 'vendor/autoload.php';
+date_default_timezone_set("Asia/Manila");
 
-header('Content-Type: application/json');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = mysqli_real_escape_string($con, $_POST['email']);
 
-if (!isset($_POST['email'])) {
-    echo json_encode([
-        'icon' => 'error',
-        'title' => 'Error',
-        'text' => 'Email is required'
-    ]);
-    exit;
-}
+    // Check if the email exists and belongs to user with id=1
+    $query = "SELECT * FROM tbluser WHERE email = '$email' AND id = 1";
+    $result = mysqli_query($con, $query);
 
-try {
-    $email = $_POST['email'];
-    
-    // Check if email exists in database for id=1
-    $stmt = $con->prepare("SELECT email FROM tbluser WHERE id = 1 AND email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        echo json_encode([
-            'icon' => 'error',
-            'title' => 'Error',
-            'text' => 'Email not found or not authorized.'
-        ]);
-        exit;
+    if (mysqli_num_rows($result) > 0) {
+        // Generate a secure token
+        $token = bin2hex(random_bytes(16));
+
+        // Save the token in the database
+        $updateQuery = "UPDATE tbluser SET token = '$token', reset_token_at = NOW() WHERE id = 1";
+        mysqli_query($con, $updateQuery);
+
+        // Prepare the email
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+        $mail->SMTPAuth = true;
+        $mail->Username = 'montgomeryaurelia06@gmail.com'; // SMTP username
+        $mail->Password = 'oylq mpnj adlw iuod'; // SMTP password
+        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom('montgomeryaurelia06@gmail.com', 'Barangay Portal Reset Password');
+        $mail->addAddress($email);
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Password Reset Request';
+        $mail->Body = "Click the link to reset your password: <a href='https://barangayportal.com/pages/new_password.php?token=$token'>Reset Password</a>";
+
+        if ($mail->send()) {
+            echo json_encode(['icon' => 'success', 'title' => 'Email Sent', 'text' => 'Check your email for the reset link.']);
+        } else {
+            echo json_encode(['icon' => 'error', 'title' => 'Email Error', 'text' => 'Failed to send email.']);
+        }
+    } else {
+        echo json_encode(['icon' => 'error', 'title' => 'Invalid Email', 'text' => 'The email does not exist or is not associated with the correct user.']);
     }
-
-    // Generate token
-    $token = bin2hex(random_bytes(32));
-    $reset_token_at = date('Y-m-d H:i:s');
-
-    // Update database with token
-    $update_stmt = $con->prepare("UPDATE tbluser SET token = ?, reset_token_at = ? WHERE id = 1");
-    $update_stmt->bind_param("ss", $token, $reset_token_at);
-    
-    if (!$update_stmt->execute()) {
-        throw new Exception("Failed to generate reset token.");
-    }
-
-    // Create PHPMailer instance
-    $mail = new PHPMailer(true);
-
-    // Server settings
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com'; // Replace with your SMTP host
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'your-email@gmail.com'; // Replace with your email
-    $mail->Password   = 'your-app-password'; // Replace with your app password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
-
-    // Recipients
-    $mail->setFrom('your-email@gmail.com', 'Your Name');
-    $mail->addAddress($email);
-
-    // Content
-    $reset_link = "https://yourwebsite.com/reset-password.php?token=" . $token;
-    
-    $mail->isHTML(true);
-    $mail->Subject = 'Password Reset Request';
-    $mail->Body    = "
-        <html>
-        <head>
-            <style>
-                .container {
-                    padding: 20px;
-                    background-color: #f5f5f5;
-                    font-family: Arial, sans-serif;
-                }
-                .button {
-                    background-color: #007bff;
-                    color: white;
-                    padding: 10px 20px;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    display: inline-block;
-                    margin: 20px 0;
-                }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <h2>Password Reset Request</h2>
-                <p>You have requested to reset your password. Click the button below to reset it:</p>
-                <a href='{$reset_link}' class='button'>Reset Password</a>
-                <p>If you didn't request this, please ignore this email.</p>
-                <p>This link will expire in 1 hour.</p>
-            </div>
-        </body>
-        </html>
-    ";
-    $mail->AltBody = "Reset your password by clicking this link: {$reset_link}";
-
-    $mail->send();
-
-    echo json_encode([
-        'icon' => 'success',
-        'title' => 'Success',
-        'text' => 'Password reset link has been sent to your email.'
-    ]);
-
-} catch (Exception $e) {
-    echo json_encode([
-        'icon' => 'error',
-        'title' => 'Error',
-        'text' => 'An error occurred: ' . $e->getMessage()
-    ]);
 }
 ?>
