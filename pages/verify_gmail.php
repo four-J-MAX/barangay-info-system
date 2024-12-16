@@ -1,4 +1,5 @@
 <?php
+session_start();
 require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded
 
 // Enable error reporting for debugging
@@ -16,6 +17,24 @@ date_default_timezone_set("Asia/Manila");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($con, $_POST['email']);
+
+    // Initialize session variables if not set
+    if (!isset($_SESSION['attempts'])) {
+        $_SESSION['attempts'] = 0;
+        $_SESSION['last_attempt_time'] = time();
+    }
+
+    $cooldown_period = 180; // 3 minutes in seconds
+
+    // Check if the user is in cooldown period
+    if ($_SESSION['attempts'] >= 3 && (time() - $_SESSION['last_attempt_time']) < $cooldown_period) {
+        echo json_encode([
+            'icon' => 'error',
+            'title' => 'Too Many Attempts',
+            'text' => 'Please wait for 3 minutes before trying again.'
+        ]);
+        exit;
+    }
 
     // Check if the email exists and belongs to user with id=1
     $query = "SELECT * FROM tbluser WHERE email = '$email' AND id = 1";
@@ -56,11 +75,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mail->Body = "Your verification code is: <strong>$verificationCode</strong>. This code will expire in 15 minutes.";
 
         if ($mail->send()) {
+            // Reset attempts on successful email send
+            $_SESSION['attempts'] = 0;
             echo json_encode(['icon' => 'success', 'title' => 'Email Sent', 'text' => 'Check your email for the verification code.']);
         } else {
+            // Increment attempts on failure
+            $_SESSION['attempts']++;
+            $_SESSION['last_attempt_time'] = time();
             echo json_encode(['icon' => 'error', 'title' => 'Email Error', 'text' => 'Failed to send email.']);
         }
     } else {
+        // Increment attempts on invalid email
+        $_SESSION['attempts']++;
+        $_SESSION['last_attempt_time'] = time();
         echo json_encode(['icon' => 'error', 'title' => 'Invalid Email', 'text' => 'The email does not exist or is not associated with the correct user.']);
     }
 }

@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,9 +59,12 @@
         }
     </style>
 </head>
+
 <body>
     <div class="form-content-box">
-        <center><h1>Verify Your Admin Gmail</h1></center>
+        <center>
+            <h1>Verify Your Admin Gmail</h1>
+        </center>
         <form id="resetForm">
             <div class="form-group">
                 <input type="email" name="email" id="email" placeholder="Enter your email" required>
@@ -72,13 +76,13 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#resetForm').on('submit', function(e) {
+        $(document).ready(function () {
+
+            $('#resetForm').on('submit', function (e) {
                 e.preventDefault();
-                
+
                 const email = $('#email').val();
 
-                // Show loading state
                 Swal.fire({
                     title: 'Sending...',
                     text: 'Please wait while we process your request.',
@@ -91,13 +95,12 @@
                     backdrop: false
                 });
 
-                // Send AJAX request
                 $.ajax({
                     url: 'verify_gmail.php',
                     type: 'POST',
                     data: { email: email },
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         Swal.fire({
                             icon: response.icon,
                             title: response.title,
@@ -109,22 +112,26 @@
                             backdrop: false
                         }).then(() => {
                             if (response.icon === 'success') {
-                                // Replace the form with a new form
                                 const newFormHtml = `
-                                    <form id="newForm" method="POST">
-                                        <div class="form-group">
-                                            <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn-submit">Verify Code</button>
-                                        </div>
-                                    </form>
-                                `;
+                            <form id="newForm" method="POST">
+                                <div class="form-group">
+                                    <input type="text" name="verification_code" id="verification_code" placeholder="Enter verification code" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn-submit">Verify Code</button>
+                                </div>
+                            </form>
+                        `;
                                 $('.form-content-box').html(newFormHtml);
+                            } else if (response.title === 'Too Many Attempts') {
+                                $('#resetForm button[type="submit"]').prop('disabled', true);
+                                setTimeout(() => {
+                                    $('#resetForm button[type="submit"]').prop('disabled', false);
+                                }, 180000); // 3 minutes in milliseconds
                             }
                         });
                     },
-                    error: function() {
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -140,7 +147,7 @@
             });
 
             // Handle the new form submission
-            $(document).on('submit', '#newForm', function(e) {
+            $(document).on('submit', '#newForm', function (e) {
                 e.preventDefault();
 
                 const verificationCode = $('#verification_code').val();
@@ -164,7 +171,7 @@
                     type: 'POST',
                     data: { verification_code: verificationCode },
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         Swal.fire({
                             icon: response.status,
                             title: response.status === 'success' ? 'Success' : 'Error',
@@ -181,7 +188,7 @@
                             }
                         });
                     },
-                    error: function() {
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -198,4 +205,5 @@
         });
     </script>
 </body>
+
 </html>
