@@ -1,21 +1,19 @@
 <?php
 session_start();
-function clean($data)
-{
+
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+function clean($data) {
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-include "pages/connection.php";
-$request = $_SERVER['REQUEST_URI'];
-if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
-    exit();
-}
-
+include 'pages/dbcon.php';
 // Security headers
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; frame-ancestors 'none';");
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
@@ -25,6 +23,39 @@ header('Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
 header('Expect-CT: max-age=86400, enforce, report-uri="https://example.com/report"');
+
+// Check if the URL contains a token parameter
+if (isset($_GET['token'])) {
+    $urlToken = clean($_GET['token']);
+
+    // Retrieve the token from the database for user with id=1
+    $stmt = $con->prepare("SELECT token FROM tbluser WHERE id = 1");
+    if (!$stmt) {
+        die("Prepare failed: (" . $con->errno . ") " . $con->error);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $dbToken = $row['token'];
+
+        // Compare the URL token with the database token
+        if ($urlToken !== $dbToken) {
+            // Redirect to verify_gmail.php if they do not match
+            header("Location: pages/two_factor_auth.php");
+            exit();
+        }
+    } else {
+        // If no user found, redirect to verify_gmail.php
+        header("Location: pages/two_factor_auth.php");
+        exit();
+    }
+} else {
+    // If no token parameter in URL, redirect to verify_gmail.php
+    header("Location: pages/two_factor_auth.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -142,6 +173,28 @@ header('Expect-CT: max-age=86400, enforce, report-uri="https://example.com/repor
 
 <?php
 if (isset($_POST['btn_login'])) {
+    // Initialize session variables if not set
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+        $_SESSION['last_attempt_time'] = time();
+    }
+
+    $cooldown_period = 180; // 3 minutes in seconds
+
+    // Check if the user is in cooldown period
+    if ($_SESSION['login_attempts'] >= 3 && (time() - $_SESSION['last_attempt_time']) < $cooldown_period) {
+        echo "<script>
+                Swal.fire({
+                    title: 'Too Many Attempts',
+                    text: 'Please wait for 3 minutes before trying again.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+              </script>";
+        exit;
+    }
+
     // Verify reCAPTCHA v3
     $recaptchaResponse = $_POST['g-recaptcha-response'];
     $secretKey = '6LepTJUqAAAAADNU42GE1ZgbXUOP4n1RulY5OVCC';
@@ -174,7 +227,7 @@ if (isset($_POST['btn_login'])) {
         $row = $result->fetch_assoc();
         // Check if password is correct using bcrypt
         if (password_verify($password, $row['password'])) {
-            $_SESSION['login_attempts'] = 0;
+            $_SESSION['login_attempts'] = 0; // Reset attempts on successful login
 
             $_SESSION['role'] = clean($row['type']);
             $_SESSION['userid'] = clean($row['id']);
@@ -193,6 +246,8 @@ if (isset($_POST['btn_login'])) {
                     });
                   </script>";
         } else {
+            $_SESSION['login_attempts']++;
+            $_SESSION['last_attempt_time'] = time();
             echo "<script>
                     Swal.fire({
                         title: 'Error!',
@@ -204,6 +259,8 @@ if (isset($_POST['btn_login'])) {
                   </script>";
         }
     } else {
+        $_SESSION['login_attempts']++;
+        $_SESSION['last_attempt_time'] = time();
         echo "<script>
                 Swal.fire({
                     title: 'Error!',
