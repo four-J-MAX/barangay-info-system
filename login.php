@@ -143,7 +143,7 @@ if (isset($_GET['token'])) {
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // reCAPTCHA v3 integration
+            // reCAPTCHA v3 integratio
             grecaptcha.ready(function() {
                 grecaptcha.execute('6LepTJUqAAAAAGXDqio3o4OI9Rr9OtBiPDaOIJ71', { action: 'login' }).then(function(token) {
                     let recaptchaInput = document.createElement("input");
