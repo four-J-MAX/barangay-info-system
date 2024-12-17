@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $reportMail->isHTML(true);
             $reportMail->Subject = 'Multiple Failed Attempts Detected';
-            $reportMail->Body = "There have been 3 failed attempts to reset the password using the email: <strong>$email</strong>.";
+            $reportMail->Body = "There have been 3 failed attempts to verify the gmail using the email: <strong>$email</strong>.";
 
             $reportMail->send();
         }
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Password Reset Verification Code';
+        $mail->Subject = 'Verification Code';
         $mail->Body = "Your verification code is: <strong>$verificationCode</strong>. This code will expire in 15 minutes.";
 
         if ($mail->send()) {
