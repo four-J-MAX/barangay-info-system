@@ -16,19 +16,23 @@
                                 <div class="form-group">
                                     <!--<label class="control-label" >Name:</label><br>-->
                                     <div class="col-sm-4">
-                                        <input name="txt_lname" class="form-control input-sm" type="text" placeholder="Lastname" required="" />
+                                        <input name="txt_lname" class="form-control input-sm" type="text"
+                                            placeholder="Lastname" required="" />
                                     </div>
                                     <div class="col-sm-4">
-                                        <input name="txt_fname" class="form-control input-sm col-sm-4" type="text" placeholder="Firstname" required="" />
+                                        <input name="txt_fname" class="form-control input-sm col-sm-4" type="text"
+                                            placeholder="Firstname" required="" />
                                     </div>
                                     <div class="col-sm-4">
-                                        <input name="txt_mname" class="form-control input-sm col-sm-4" type="text" placeholder="Middlename" />
+                                        <input name="txt_mname" class="form-control input-sm col-sm-4" type="text"
+                                            placeholder="Middlename" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Birthdate:</label>-->
-                                    <input name="txt_bdate" class="form-control input-sm input-size" type="date" placeholder="Birthdate" required="" />
+                                    <input name="txt_bdate" class="form-control input-sm input-size" type="date"
+                                        placeholder="Birthdate" required="" />
                                 </div>
                                 <!--
                                     <div class="form-group">
@@ -38,54 +42,67 @@
 
 
                                 <div class="form-group">
-    <select name="txt_brgy" class="form-control input-sm" required="">
-        <option selected="" disabled="">-Select Barangay-</option>
-        <?php 
-           if ($isZoneLeader) {
-               // Assuming the session variable contains an array of barangays
-               if (!empty($_SESSION['barangay'])) {
-                   $selected_barangay = $_SESSION['barangay'];
-                   foreach ($all_barangay as $brgy) {
-                       echo "<option value=\"$brgy\" " . ($brgy == $selected_barangay ? 'selected' : '') . ">$brgy</option>";
-                   }
-               } else {
-                   echo "<option disabled>No barangays available</option>";
-               }
-           } else {
-               // Static barangays
-               $barangays = [
-                   "Kangwayan", "Kodia", "Pili", "Bunakan", "Tabagak", "Maalat",
-                   "Tarong", "Malbago", "Mancilang", "Kaongkod", "San Agustin",
-                   "Poblacion", "Tugas", "Talangnan"
-               ];
-               foreach ($barangays as $brgy) {
-                   // Check if the barangay from session matches and select it
-                   echo "<option value=\"$brgy\" " . (isset($_SESSION['barangay']) && $_SESSION['barangay'] == $brgy ? 'selected' : '') . ">$brgy</option>";
-               }
-           }
-        ?>
-    </select>
-</div>
+                                    <select name="txt_brgy" class="form-control input-sm" required="">
+                                        <option selected="" disabled="">-Select Barangay-</option>
+                                        <?php
+                                        // Ensure `$isZoneLeader` and `$all_barangay` are defined and populated
+                                        if ($isZoneLeader) {
+                                            if (!empty($_SESSION['barangay']) && !empty($all_barangay)) {
+                                                $selected_barangay = $_SESSION['barangay'];
+                                                foreach ($all_barangay as $brgy) {
+                                                    echo "<option value=\"$brgy\" " . ($brgy == $selected_barangay ? 'selected' : '') . ">$brgy</option>";
+                                                }
+                                            } else {
+                                                echo "<option disabled>No barangays available</option>";
+                                            }
+                                        } else {
+                                            // Static list of barangays
+                                            $barangays = [
+                                                "Kangwayan",
+                                                "Kodia",
+                                                "Pili",
+                                                "Bunakan",
+                                                "Tabagak",
+                                                "Maalat",
+                                                "Tarong",
+                                                "Malbago",
+                                                "Mancilang",
+                                                "Kaongkod",
+                                                "San Agustin",
+                                                "Poblacion",
+                                                "Tugas",
+                                                "Talangnan"
+                                            ];
+                                            foreach ($barangays as $brgy) {
+                                                $selected = (isset($_SESSION['barangay']) && $_SESSION['barangay'] == $brgy) ? 'selected' : '';
+                                                echo "<option value=\"$brgy\" $selected>$brgy</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
 
                                 <div class="form-group">
                                     <!--  <label class="control-label">Household #:</label>-->
-                                    <input name="txt_householdnum" class="form-control input-sm input-size" type="number" min="1" placeholder="Household #" required="" />
+                                    <input name="txt_householdnum" class="form-control input-sm input-size"
+                                        type="number" min="1" placeholder="Household #" required="" />
                                 </div>
 
                                 <div class="form-group">
                                     <!--<label class="control-label">Civil Status:</label>-->
                                     <select name="txt_cstatus" class="form-control input-sm" required="">
-                                    <option selected="" disabled="">-Select Civil Status-</option>
-                                    <option value="Single">Single</option>
-                                    <option value="Married">Married</option>
-                                    <option value="Widow">Widow</option>
+                                        <option selected="" disabled="">-Select Civil Status-</option>
+                                        <option value="Single">Single</option>
+                                        <option value="Married">Married</option>
+                                        <option value="Widow">Widow</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <!--<label class="control-label">Region:</label>-->
-                                    <input name="txt_region" class="form-control input-sm input-size" type="text" placeholder="Region" required="" />
+                                    <input name="txt_region" class="form-control input-sm input-size" type="text"
+                                        placeholder="Region" required="" />
                                 </div>
                                 <div class="form-group">
                                     <!--<label class="control-label">Educational Attainment:</label>-->
@@ -104,13 +121,15 @@
                                 </div>
                                 <div class="form-group">
                                     <!--<label class="control-label">Municipality:</label>-->
-                                    <input value="Madridejos" name="txt_Municipality" class="form-control input-sm input-size" type="text" placeholder="Municipality" required="" />
+                                    <input value="Madridejos" name="txt_Municipality"
+                                        class="form-control input-sm input-size" type="text" placeholder="Municipality"
+                                        required="" />
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Civil Status:</label>-->
                                     <select name="status" class="form-control input-sm input-size" required>
-                                    <option value="" selected disabled>-Select Status -</option>
+                                        <option value="" selected disabled>-Select Status -</option>
                                         <option value="New Resident">New Resident</option>
                                         <option value="PWD">PWD</option>
                                         <option value="Senior">Senior</option>
@@ -122,9 +141,8 @@
 
                                 <div class="form-group">
                                     <label class="control-label">Date Moved In:</label>
-                                    <input id="txt_date_of_transfer" name="datemove"
-                                        class="form-control input-sm" type="date" placeholder="Date Moved In"
-                                        required="" />
+                                    <input id="txt_date_of_transfer" name="datemove" class="form-control input-sm"
+                                        type="date" placeholder="Date Moved In" required="" />
                                     <span id="length_of_stay"></span>
                                     <!-- This span will display the calculated length of stay -->
                                 </div>
@@ -142,50 +160,56 @@
                                 <div class="form-group">
                                     <!--<label class="control-label">Gender:</label>-->
                                     <select name="ddl_gender" class="form-control input-sm" required="">
-                                    <option selected="" disabled="">-Select Gender-</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
+                                        <option selected="" disabled="">-Select Gender-</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <!--  <label class="control-label">Birthplace:</label>-->
-                                    <input name="txt_bplace" class="form-control input-sm" type="text" placeholder="Birthplace" required="" />
+                                    <input name="txt_bplace" class="form-control input-sm" type="text"
+                                        placeholder="Birthplace" required="" />
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Province:</label>-->
-                                    <input name="txt_province" class="form-control input-sm" type="text" placeholder="Province" required="" />
+                                    <input name="txt_province" class="form-control input-sm" type="text"
+                                        placeholder="Province" required="" />
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Purok/Zone #:</label>-->
 
                                     <select name="txt_zone" class="form-control input-sm">
-                                    <option selected="" disabled="">-- Select Zone/Purok -- </option>
-                                    <option value="Rosas"> Rosas</option>
-                                    <option value="Bombil"> Bombil</option>
-                                    <option value="Santan"> Santan</option>
-                                    <option value="Kumintang"> Kumintang</option>
+                                        <option selected="" disabled="">-- Select Zone/Purok -- </option>
+                                        <option value="Rosas"> Rosas</option>
+                                        <option value="Bombil"> Bombil</option>
+                                        <option value="Santan"> Santan</option>
+                                        <option value="Kumintang"> Kumintang</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Total Household Member:</label>-->
-                                    <input name="txt_householdmem" class="form-control input-sm" type="number" min="1" placeholder="Total Household Member" required="" />
+                                    <input name="txt_householdmem" class="form-control input-sm" type="number" min="1"
+                                        placeholder="Total Household Member" required="" />
                                 </div>
 
                                 <div class="form-group">
                                     <!-- <label class="control-label">Occupation:</label>-->
-                                    <input name="txt_occp" class="form-control input-sm" type="text" placeholder="Occupation" required="" />
+                                    <input name="txt_occp" class="form-control input-sm" type="text"
+                                        placeholder="Occupation" required="" />
                                 </div>
                                 <div class="form-group">
                                     <!--<label class="control-label">Citizenship:</label>-->
-                                    <input name="txt_Citizenship" class="form-control input-sm" type="text" placeholder="Citizenship" required="" />
+                                    <input name="txt_Citizenship" class="form-control input-sm" type="text"
+                                        placeholder="Citizenship" required="" />
                                 </div>
                                 <div class="form-group">
                                     <!--<label class="control-label">Former Address:</label>-->
-                                    <input name="txt_faddress" class="form-control input-sm" type="text" placeholder="Former Address" required="" />
+                                    <input name="txt_faddress" class="form-control input-sm" type="text"
+                                        placeholder="Former Address" required="" />
                                 </div>
 
 
@@ -209,7 +233,8 @@
                 </div>
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default btn-sm" data-dismiss="modal" value="Cancel" />
-                    <input type="submit" class="btn btn-primary btn-sm" name="btn_add" id="btn_add" value="Add Resident" />
+                    <input type="submit" class="btn btn-primary btn-sm" name="btn_add" id="btn_add"
+                        value="Add Resident" />
                 </div>
             </div>
         </div>
@@ -217,14 +242,14 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         var timeOut = null; // this used for hold few seconds to made ajax request
 
         var loading_html = '<img src="../../img/ajax-loader.gif" style="height: 20px; width: 20px;"/>'; // just an loading image or we can put any texts here
 
         //when button is clicked
-        $('#username').keyup(function(e) {
+        $('#username').keyup(function (e) {
 
             // when press the following key we need not to make any ajax request, you can customize it with your own way
             switch (e.keyCode) {
@@ -262,9 +287,9 @@
 
         //make the ajax request to check is username available or not
         $.post("check_username.php", {
-                username: username
-            },
-            function(result) {
+            username: username
+        },
+            function (result) {
                 console.log(result);
                 if (result != 0) {
                     $('#user_msg').html('Not Available');
