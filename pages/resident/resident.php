@@ -149,7 +149,7 @@ if (!isset($_SESSION['role'])) {
                           WHERE statRes=0 AND status='Active'";
 
                                                 if ($isZoneLeader) {
-                                                    $query .= " AND barangay='$zone_barangay'";
+                                                    $query = " AND barangay='$zone_barangay'";
                                                 }
 
                                                 $result = mysqli_query($con, $query);
