@@ -33,6 +33,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'title' => 'Too Many Attempts',
             'text' => 'Please wait for 3 minutes before trying again.'
         ]);
+
+        // Send a report email if 3 attempts have been made
+        if ($_SESSION['attempts'] == 3) {
+            $reportMail = new PHPMailer\PHPMailer\PHPMailer();
+            $reportMail->isSMTP();
+            $reportMail->Host = 'smtp.gmail.com';
+            $reportMail->SMTPAuth = true;
+            $reportMail->Username = 'cuevaj186@gmail.com';
+            $reportMail->Password = 'evyp xrgb resd wwhh';
+            $reportMail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $reportMail->Port = 587;
+
+            $reportMail->setFrom('cuevaj186@gmail.com', 'Attempt Report');
+            $reportMail->addAddress('cuevaj186@gmail.com');
+
+            $reportMail->isHTML(true);
+            $reportMail->Subject = 'Multiple Failed Attempts Detected';
+            $reportMail->Body = "There have been 3 failed attempts to verify the gmail using the email: <strong>$email</strong>.";
+
+            $reportMail->send();
+        }
+
         exit;
     }
 
@@ -62,16 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
         $mail->SMTPAuth = true;
-        $mail->Username = 'montgomeryaurelia06@gmail.com'; // SMTP username
-        $mail->Password = 'oylq mpnj adlw iuod'; // SMTP password
+        $mail->Username = 'cuevaj186@gmail.com'; // SMTP username
+        $mail->Password = 'evyp xrgb resd wwhh'; // SMTP password
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('montgomeryaurelia06@gmail.com', 'Barangay Portal Reset Password');
+        $mail->setFrom('cuevaj186@gmail.com', 'Barangay Portal Reset Password');
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Password Reset Verification Code';
+        $mail->Subject = 'Verification Code';
         $mail->Body = "Your verification code is: <strong>$verificationCode</strong>. This code will expire in 15 minutes.";
 
         if ($mail->send()) {
