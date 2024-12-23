@@ -40,40 +40,6 @@
                                         <input name="txt_age" class="form-control input-sm input-size" type="number" placeholder="Age"/>
                                     </div> -->
 
-                                <?php
-                                if ($isZoneLeader) {
-                                    $username = $_SESSION['username']; // Assuming username is stored in session
-                                    $query = "SELECT barangay FROM tbluser WHERE username = ? AND type = 'Zone_Leader' AND
-                                deleted = 0 LIMIT 1";
-                                    $stmt = $conn->prepare($query);
-                                    $stmt->bind_param("s", $username);
-                                    $stmt->execute();
-                                    $stmt->bind_result($barangay);
-                                    if ($stmt->fetch()) {
-                                        $all_barangay = [$barangay]; // Zone Leader has one barangay
-                                        $_SESSION['barangay'] = $barangay; // Store in session for later use
-                                    }
-                                    $stmt->close();
-                                } else {
-                                    // Static barangays for other users
-                                    $all_barangay = [
-                                        "Kangwayan",
-                                        "Kodia",
-                                        "Pili",
-                                        "Bunakan",
-                                        "Tabagak",
-                                        "Maalat",
-                                        "Tarong",
-                                        "Malbago",
-                                        "Mancilang",
-                                        "Kaongkod",
-                                        "San Agustin",
-                                        "Poblacion",
-                                        "Tugas",
-                                        "Talangnan"
-                                    ];
-                                }
-                                ?>
 
                                 <div class="form-group">
                                     <select name="txt_brgy" class="form-control input-sm" required="">
