@@ -41,11 +41,53 @@
                                     </div> -->
 
 
+                                <?php
+                                session_start();
+                                include '../connection.php'; // Include your database connection
+                                
+                                $isZoneLeader = $_SESSION['role'] === 'Zone_Leader'; // Check if user is a Zone Leader
+                                $all_barangay = [];
+
+                                if ($isZoneLeader) {
+                                    // Fetch the Zone Leader's barangay
+                                    $username = $_SESSION['username']; // Assuming username is stored in session
+                                    $query = "SELECT barangay FROM tbluser WHERE username = ? AND type = 'Zone_Leader' AND deleted = 0 LIMIT 1";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->bind_param("s", $username);
+                                    $stmt->execute();
+                                    $stmt->bind_result($barangay);
+                                    if ($stmt->fetch()) {
+                                        $all_barangay = [$barangay]; // Zone Leader has one barangay
+                                        $_SESSION['barangay'] = $barangay; // Store barangay in session
+                                    }
+                                    $stmt->close();
+                                } else {
+                                    // Static list of barangays for other users
+                                    $all_barangay = [
+                                        "Kangwayan",
+                                        "Kodia",
+                                        "Pili",
+                                        "Bunakan",
+                                        "Tabagak",
+                                        "Maalat",
+                                        "Tarong",
+                                        "Malbago",
+                                        "Mancilang",
+                                        "Kaongkod",
+                                        "San Agustin",
+                                        "Poblacion",
+                                        "Tugas",
+                                        "Talangnan"
+                                    ];
+                                }
+                                ?>
+
                                 <div class="form-group">
                                     <select name="txt_brgy" class="form-control input-sm" required="">
                                         <option selected="" disabled="">-Select Barangay-</option>
                                         <?php
                                         if ($isZoneLeader) {
+                                            // Zone Leader: Display only their barangay
                                             if (!empty($all_barangay)) {
                                                 foreach ($all_barangay as $brgy) {
                                                     echo "<option value=\"$brgy\" selected>$brgy</option>";
@@ -54,6 +96,7 @@
                                                 echo "<option disabled>No barangay available</option>";
                                             }
                                         } else {
+                                            // Non-Zone Leader: Display static barangays
                                             foreach ($all_barangay as $brgy) {
                                                 $selected = (isset($_SESSION['barangay']) && $_SESSION['barangay'] == $brgy) ? 'selected' : '';
                                                 echo "<option value=\"$brgy\" $selected>$brgy</option>";
@@ -62,7 +105,6 @@
                                         ?>
                                     </select>
                                 </div>
-
 
 
                                 <div class="form-group">

@@ -149,9 +149,11 @@ if (!isset($_SESSION['role'])) {
                                               WHERE statRes=0 AND status='Active'";
 
                                                 if ($isZoneLeader) {
+                                                    $zone_barangay = $_SESSION['barangay']; // Use session-stored barangay for filtering
                                                     $query .= " AND barangay='$zone_barangay'";
                                                 }
                                                 $result = mysqli_query($con, $query);
+
                                                 if (!$result) {
                                                     die("Error executing query: " . mysqli_error($con));
                                                 }
