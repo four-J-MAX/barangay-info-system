@@ -77,9 +77,9 @@ if (!isset($_SESSION['role'])) {
                                         <span class="info-box-number" style="text-align: center;">
                                             <?php
                                             if ($isZoneLeader) {
-                                                $q = mysqli_query($con, "SELECT * from tblresident where statRes=0 AND barangay = '$zone_barangay' AND status = 'Active'");
+                                                $q = mysqli_query($con, "SELECT * from tblresident where statRes=0 AND status = 'Active' AND barangay = '$zone_barangay'");
                                             } else {
-                                                $q = mysqli_query($con, "SELECT * from tblresident where statRes=0");
+                                                $q = mysqli_query($con, "SELECT * from tblresident where statRes=0 AND status = 'Active'");
                                             }
                                             $num_rows = mysqli_num_rows($q);
                                             echo $num_rows;
