@@ -195,8 +195,6 @@ if (!isset($_SESSION['role'])) {
 
                             <?php include "add_modal.php"; ?>
 
-                            <?php include "edit_modal.php"; ?>
-
                             <?php include "function.php"; ?>
 
 
