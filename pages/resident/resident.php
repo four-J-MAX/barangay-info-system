@@ -144,14 +144,13 @@ if (!isset($_SESSION['role'])) {
                                             <tbody>
                                                 <?php
                                                 $query = "SELECT *, zone, id, CONCAT(lname, ', ', fname, ' ', mname) AS cname, 
-                          age, gender, formerAddress, image 
-                          FROM tblresident 
-                          WHERE statRes=0 AND status='Active'";
+                                              age, gender, formerAddress, image 
+                                              FROM tblresident 
+                                              WHERE statRes=0 AND status='Active'";
 
                                                 if ($isZoneLeader) {
-                                                    $query = " AND barangay='$zone_barangay'";
+                                                    $query .= " AND barangay='$zone_barangay'";
                                                 }
-
                                                 $result = mysqli_query($con, $query);
                                                 if (!$result) {
                                                     die("Error executing query: " . mysqli_error($con));
