@@ -42,9 +42,9 @@
 
 
                                 <?php
-                                session_start();
-                                include '../connection.php'; // Include your database connection
-                                
+
+
+
                                 $isZoneLeader = $_SESSION['role'] === 'Zone_Leader'; // Check if user is a Zone Leader
                                 $all_barangay = [];
 
