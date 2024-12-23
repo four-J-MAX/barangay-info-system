@@ -144,22 +144,23 @@ if (!isset($_SESSION['role'])) {
                                             <tbody>
                                                 <?php
                                                 $query = "SELECT *, zone, id, CONCAT(lname, ', ', fname, ' ', mname) AS cname, 
-                                              age, gender, formerAddress, image 
-                                              FROM tblresident 
-                                              WHERE statRes=0 AND status='Active'";
+              age, gender, formerAddress, image 
+              FROM tblresident 
+              WHERE statRes=0 AND status='Active'";
 
                                                 if ($isZoneLeader) {
-                                                    $zone_barangay = $_SESSION['barangay']; // Use session-stored barangay for filtering
+                                                    $zone_barangay = $_SESSION['barangay'];
                                                     $query .= " AND barangay='$zone_barangay'";
                                                 }
-                                                $result = mysqli_query($con, $query);
 
+                                                $result = mysqli_query($con, $query);
                                                 if (!$result) {
                                                     die("Error executing query: " . mysqli_error($con));
                                                 }
 
                                                 if (mysqli_num_rows($result) > 0) {
                                                     while ($row = mysqli_fetch_array($result)) {
+                                                        $modalId = "editModal" . $row['id']; // Unique modal ID
                                                         echo '<tr>';
                                                         if (!isset($_SESSION['staff'])) {
                                                             echo '<td><input type="checkbox" name="chk_delete[]" class="chk_delete" value="' . $row['id'] . '" /></td>';
@@ -170,9 +171,16 @@ if (!isset($_SESSION['role'])) {
                                                         echo '<td>' . htmlspecialchars($row['gender']) . '</td>';
                                                         echo '<td>' . htmlspecialchars($row['formerAddress']) . '</td>';
                                                         if ($_SESSION['role'] != 'administrator') {
-                                                            echo '<td><button class="btn btn-primary btn-sm" data-target="#editModal' . $row['id'] . '" data-toggle="modal"><i class="fa fa-pencil-square-o"></i> Edit</button></td>';
+                                                            echo '<td>
+                                                                    <button class="btn btn-primary btn-sm" data-target="#' . $modalId . '" data-toggle="modal">
+                                                                        <i class="fa fa-pencil-square-o"></i> Edit
+                                                                    </button>
+                                                                </td>';
                                                         }
                                                         echo '</tr>';
+
+                                                        // Include the edit modal for this row
+                                                        include "edit_modalres.php";
                                                     }
                                                 } else {
                                                     echo '<tr><td colspan="6">No data available</td></tr>';
