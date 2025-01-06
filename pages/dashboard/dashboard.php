@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <html>
+<style>
+  #resident-bar-chart {
+    height: 350px;
+    /* Adjust as needed */
+    max-width: 100%;
+    /* Prevent horizontal overflow */
+  }
+
+  .panel-body {
+    overflow-x: hidden;
+    /* Avoid expanding horizontally */
+    padding: 15px;
+    /* Keep padding for design consistency */
+  }
+</style>
+
 <?php
 session_start();
 if (!isset($_SESSION['role'])) {
