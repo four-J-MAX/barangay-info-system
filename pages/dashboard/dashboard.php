@@ -176,6 +176,18 @@ if (!isset($_SESSION['role'])) {
               }
               ?>
 
+
+              <!-- Total Residents Bar Graph -->
+              <div class="col-md-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">Total Residents Per Barangay</div>
+                  <div class="panel-body">
+                    <div id="resident-bar-chart"></div>
+                  </div>
+                </div>
+              </div>
+
+
               <?php
               // Check if the session role is not equal to 'Administrator'
               if ($_SESSION['role'] != 'administrator') {
@@ -361,6 +373,30 @@ include "bar-chart.php"; ?>
     });
   </script>
 
+  <script>
+    $(function () {
+      Morris.Bar({
+        element: 'resident-bar-chart',
+        data: <?php
+        $barangayQuery = "SELECT barangay, COUNT(*) AS total FROM tblresident GROUP BY barangay";
+        $result = mysqli_query($con, $barangayQuery);
+        $barangayData = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+          $barangayData[] = ['barangay' => $row['barangay'], 'total' => (int) $row['total']];
+        }
+        echo json_encode($barangayData);
+        ?>,
+        xkey: 'barangay',
+        ykeys: ['total'],
+        labels: ['Residents'],
+        barColors: ['#3498db'],
+        hideHover: 'auto',
+        resize: true
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 
 </body>
 
