@@ -303,14 +303,13 @@ if (!isset($_SESSION['role'])) {
               <!-- Males and Females in Barangay -->
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="panel panel-default">
-                  <div class="panel-heading">
-                    Males and Females in Barangay
-                  </div>
-                  <div class="panel-body">
-                    <div id="morris-bar-chart6"></div>
+                  <div class="panel-heading">Males and Females in Barangay</div>
+                  <div class="panel-body" style="height: 400px;"> <!-- Fixed height for panel body -->
+                    <div id="morris-bar-chart6" style="height: 350px;"></div> <!-- Fixed height for chart -->
                   </div>
                 </div>
               </div>
+
               <?php
               // Check if the session role is not equal to 'Administrator'
               if ($_SESSION['role'] != 'administrator') {
