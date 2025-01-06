@@ -130,29 +130,29 @@ if ($_SESSION['role'] == 'administrator') {
     ?>
 
     <script>
-        // Bar chart for Males and Females in Barangay (Administrator)
+        // Bar chart for Males and Females in Barangay
         Morris.Bar({
             element: 'morris-bar-chart6',
             data: [
                 <?php
-                // Query to fetch data grouped by barangay and gender
+                // Query for grouping data by barangay with counts for males and females
                 if ($isZoneLeader) {
                     $qry = mysqli_query($con, "
-              SELECT barangay,
-                     SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male_count,
-                     SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female_count
-              FROM tblresident 
-              WHERE barangay = '$zone_barangay'
-              GROUP BY barangay
-          ");
+                    SELECT barangay,
+                           SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male_count,
+                           SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female_count
+                    FROM tblresident
+                    WHERE barangay = '$zone_barangay'
+                    GROUP BY barangay
+                ");
                 } else {
                     $qry = mysqli_query($con, "
-              SELECT barangay,
-                     SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male_count,
-                     SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female_count
-              FROM tblresident 
-              GROUP BY barangay
-          ");
+                    SELECT barangay,
+                           SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male_count,
+                           SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female_count
+                    FROM tblresident
+                    GROUP BY barangay
+                ");
                 }
                 while ($row = mysqli_fetch_array($qry)) {
                     echo "{y: '" . $row['barangay'] . "', male: " . $row['male_count'] . ", female: " . $row['female_count'] . "},";
@@ -163,34 +163,11 @@ if ($_SESSION['role'] == 'administrator') {
             ykeys: ['male', 'female'],
             labels: ['Male', 'Female'],
             hideHover: 'auto',
-            barColors: ['#3498db', '#e74c3c'], // Blue for male, red for female
-            stacked: false // Display bars side by side
-        });
-
-        // Bar chart for Males and Females in Barangay (Secretary)
-        Morris.Bar({
-            element: 'morris-bar-chart6',
-            data: [
-                <?php
-                if ($isZoneLeader) {
-                    $qry = mysqli_query($con, "SELECT gender, COUNT(*) as cnt FROM tblresident WHERE barangay = '$zone_barangay' GROUP BY gender");
-                } else {
-                    $qry = mysqli_query($con, "SELECT gender, COUNT(*) as cnt FROM tblresident GROUP BY gender");
-                }
-                while ($row = mysqli_fetch_array($qry)) {
-                    echo "{y: '" . $row['gender'] . "', count: " . $row['cnt'] . "},";
-                }
-                ?>
-            ],
-            xkey: 'y',
-            ykeys: ['count'],
-            labels: ['Residents'],
-            hideHover: 'auto',
-            barColors: function (row) {
-                return row.label === 'Male' ? '#3498db' : '#e74c3c'; // Consistent colors for male and female
-            }
+            barColors: ['#3498db', '#e74c3c'], // Consistent colors for male and female
+            stacked: false // Keep bars side-by-side
         });
     </script>
+
 
 
     <?php
