@@ -127,11 +127,13 @@ if (!isset($_SESSION['role'])) {
                         <?php
                         if ($isZoneLeader) {
                           $q = mysqli_query($con, "SELECT * from tblresident WHERE barangay = '$barangayByZoneLeader'");
+                          $num_rows = mysqli_num_rows($q);
                         } else {
                           $q = mysqli_query($con, "SELECT * from tblresident");
+                          $num_rows = mysqli_num_rows($q);
                         }
 
-                        $num_rows = mysqli_num_rows($q);
+                        // $num_rows = mysqli_num_rows($q);
                         echo $num_rows;
                         ?>
                       </span>
@@ -359,50 +361,6 @@ include "bar-chart.php"; ?>
     });
   </script>
 
-  <script>
-    // Gender Distribution Chart
-    $(function () {
-      var data = <?php
-      $maleCountQuery = "SELECT COUNT(*) AS total FROM tblresident WHERE gender = 'Male'";
-      $femaleCountQuery = "SELECT COUNT(*) AS total FROM tblresident WHERE gender = 'Female'";
-
-      $maleCount = mysqli_fetch_assoc(mysqli_query($con, $maleCountQuery))['total'];
-      $femaleCount = mysqli_fetch_assoc(mysqli_query($con, $femaleCountQuery))['total'];
-
-      echo json_encode([
-        ['label' => 'Male', 'value' => $maleCount],
-        ['label' => 'Female', 'value' => $femaleCount],
-      ]);
-      ?>;
-
-      Morris.Donut({
-        element: 'morris-donut-chart',
-        data: data,
-        resize: true,
-        colors: ['#3498db', '#e74c3c']
-      });
-
-      // Population per Zone Chart
-      Morris.Bar({
-        element: 'morris-bar-chart3',
-        data: <?php
-        $zoneDataQuery = "SELECT zone, COUNT(*) AS total FROM tblresident GROUP BY zone";
-        $zoneResult = mysqli_query($con, $zoneDataQuery);
-        $zoneData = [];
-        while ($row = mysqli_fetch_assoc($zoneResult)) {
-          $zoneData[] = ['zone' => 'Zone ' . $row['zone'], 'total' => (int) $row['total']];
-        }
-        echo json_encode($zoneData);
-        ?>,
-        xkey: 'zone',
-        ykeys: ['total'],
-        labels: ['Residents'],
-        barColors: ['#3498db'],
-        hideHover: 'auto',
-        resize: true
-      });
-    });
-  </script>
 
 </body>
 
